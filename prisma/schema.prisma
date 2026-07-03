@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum Segment {
+  PERSONAL
+  BUSINESS
+}
+
+enum ProductGroup {
+  ACCOUNT
+  LOAN
+  CARD
+  ELECTRONIC_SERVICE
+  TRANSFER
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MessageType {
+  CONTACT
+  NEWSLETTER
+  LOAN_INQUIRY
+  CARD_INQUIRY
+  CAREER
+}
+
+enum MessageStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+enum RequestStatus {
+  PENDING
+  CONTACTED
+  APPROVED
+  REJECTED
+}
+
+enum CategoryType {
+  PRODUCT
+  NEWS
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(VIEWER)
+  avatarUrl     String?
+  isActive      Boolean        @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  tokenHash  String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  replacedBy String?
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Category {
+  id        String       @id @default(uuid())
+  slug      String       @unique
+  nameAr    String
+  nameEn    String
+  type      CategoryType @default(PRODUCT)
+  products  Product[]
+  news      News[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id             String        @id @default(uuid())
+  slug           String        @unique
+  group          ProductGroup
+  segment        Segment       @default(PERSONAL)
+  titleAr        String
+  titleEn        String
+  taglineAr      String
+  taglineEn      String
+  descAr         String
+  descEn         String
+  bulletsAr      String[]      @default([])
+  bulletsEn      String[]      @default([])
+  images         String[]      @default([])
+  icon           String?
+  categoryId     String?
+  category       Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status         ContentStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([group, segment, status])
+  @@map("products")
+}
+
+model Campaign {
+  id        String        @id @default(uuid())
+  titleAr   String
+  titleEn   String
+  descAr    String
+  descEn    String
+  badgeAr   String
+  badgeEn   String
+  image     String
+  link      String
+  segment   Segment       @default(PERSONAL)
+  status    ContentStatus @default(DRAFT)
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("campaigns")
+}
+
+model News {
+  id             String        @id @default(uuid())
+  slug           String        @unique
+  titleAr        String
+  titleEn        String
+  descAr         String
+  descEn         String
+  contentAr      String
+  contentEn      String
+  image          String?
+  categoryId     String?
+  category       Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status         ContentStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?
+  publishedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@map("news")
+}
+
+model Branch {
+  id        String   @id @default(uuid())
+  nameAr    String
+  nameEn    String
+  addressAr String
+  addressEn String
+  lat       Float
+  lng       Float
+  hoursAr   String
+  hoursEn   String
+  phone     String
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("branches")
+}
+
+model Message {
+  id        String        @id @default(uuid())
+  type      MessageType
+  name      String?
+  email     String?
+  phone     String?
+  subject   String?
+  message   String?
+  data      Json?
+  status    MessageStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([type, status])
+  @@map("messages")
+}
+
+model LoanRequest {
+  id              String        @id @default(uuid())
+  loanType        String
+  name            String
+  phone           String
+  email           String?
+  preferredBranch String?
+  amount          Float?
+  status          RequestStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status])
+  @@map("loan_requests")
+}
+
+model CardRequest {
+  id        String        @id @default(uuid())
+  cardType  String
+  name      String
+  phone     String
+  email     String?
+  status    RequestStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@map("card_requests")
+}
+
+model Settings {
+  id                String   @id @default("singleton")
+  siteNameAr        String   @default("بنك فلسطين")
+  siteNameEn        String   @default("Bank of Palestine")
+  logoUrl           String?
+  faviconUrl        String?
+  contactEmail      String?
+  contactPhone      String?
+  contactAddressAr  String?
+  contactAddressEn  String?
+  socialFacebook    String?
+  socialTwitter     String?
+  socialInstagram   String?
+  socialLinkedin    String?
+  socialYoutube     String?
+  homepageHeroAr    String?
+  homepageHeroEn    String?
+  seoTitle          String?
+  seoDescription    String?
+  seoKeywords       String?
+  updatedAt         DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@map("audit_logs")
+}
