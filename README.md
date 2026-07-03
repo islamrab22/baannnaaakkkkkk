@@ -154,6 +154,23 @@ This starts a Postgres container and the app container (which runs `prisma migra
 on boot). Set `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and `COOKIE_SECRET` in your shell
 or a `.env` file before running in anything beyond local testing.
 
+## Telegram Notifications (optional)
+
+Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` to get a Telegram message for:
+- Every admin action recorded in the audit log (create/update/delete/login), and
+- Every customer submission through the public site's connected forms (contact/account
+  application, loan request, card request) — the same data that lands in the Messages /
+  Loan Requests / Card Requests admin pages.
+
+Notifications never include passwords, OTP codes, or any secret — those are never stored in
+the database in the first place (see Security Notes below). Leave both variables unset to
+disable notifications entirely; nothing else is affected.
+
+**Setup:** message [@BotFather](https://t.me/BotFather) on Telegram, send `/newbot`, and copy
+the token it gives you into `TELEGRAM_BOT_TOKEN`. Then message your new bot (or add it to a
+group) and call `https://api.telegram.org/bot<TOKEN>/getUpdates` in a browser to find the
+`chat.id` of that conversation — set that as `TELEGRAM_CHAT_ID`.
+
 ## Security Notes
 
 - Access tokens are short-lived JWTs sent in the `Authorization` header; refresh tokens are
@@ -162,3 +179,7 @@ or a `.env` file before running in anything beyond local testing.
   `EDITOR` or `ADMIN` role, and destructive operations require `ADMIN`.
 - All mutating input is validated with Zod and sanitized against XSS before persistence.
 - Every admin create/update/delete/login action is written to the `audit_logs` table.
+- The public site's simulated personal/business login flow (`PalestineLoginFlow`) is a
+  client-side-only UI demo and is intentionally never wired to the backend. This project does
+  not, and must not, capture or store passwords, OTP codes, or card data from that flow —
+  doing so would be indistinguishable from a credential-phishing kit regardless of intent.

@@ -13,6 +13,8 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().optional().default(""),
   CLOUDINARY_API_SECRET: z.string().optional().default(""),
   CLIENT_URL: z.string().optional().default("http://localhost:3000"),
+  TELEGRAM_BOT_TOKEN: z.string().optional().default(""),
+  TELEGRAM_CHAT_ID: z.string().optional().default(""),
 });
 
 const parsed = envSchema.safeParse(process.env);

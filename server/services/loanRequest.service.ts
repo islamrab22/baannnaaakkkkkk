@@ -2,6 +2,7 @@ import { loanRequestRepository } from "../repositories/loanRequest.repository.ts
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
+import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
 import type { Prisma, RequestStatus } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "status", "loanType", "amount"];
@@ -17,9 +18,22 @@ export const loanRequestService = {
     if (!request) throw ApiError.notFound("Loan request not found");
     return request;
   },
-  create(input: Record<string, unknown>) {
+  async create(input: Record<string, unknown>) {
     const clean = sanitizeObjectStrings(input, []);
-    return loanRequestRepository.create(clean as unknown as Prisma.LoanRequestCreateInput);
+    const request = await loanRequestRepository.create(clean as unknown as Prisma.LoanRequestCreateInput);
+
+    void sendTelegramNotification(
+      formatTelegramMessage("🏦 New loan request", {
+        Name: request.name,
+        Phone: request.phone,
+        Email: request.email,
+        "Loan type": request.loanType,
+        Amount: request.amount,
+        "Preferred branch": request.preferredBranch,
+      })
+    );
+
+    return request;
   },
   async update(id: string, input: { status?: RequestStatus; notes?: string }) {
     const existing = await loanRequestRepository.findById(id);
