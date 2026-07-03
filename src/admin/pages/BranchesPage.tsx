@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Edit2, Trash2, MapPinned } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import DataTable, { type Column } from "../components/DataTable.tsx";
 import Pagination from "../components/Pagination.tsx";
 import Modal from "../components/Modal.tsx";
@@ -21,6 +22,7 @@ const EMPTY_FORM: BranchForm = {
 };
 
 export default function BranchesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const canWrite = user?.role === "ADMIN" || user?.role === "EDITOR";
   const canDelete = user?.role === "ADMIN";
@@ -52,15 +54,15 @@ export default function BranchesPage() {
       const payload = { ...form, lat: parseFloat(form.lat), lng: parseFloat(form.lng) };
       if (editing) {
         await api.patch(`/api/admin/branches/${editing.id}`, payload);
-        toast.success("Branch updated");
+        toast.success(t("branches.toasts.updated"));
       } else {
         await api.post("/api/admin/branches", payload);
-        toast.success("Branch created");
+        toast.success(t("branches.toasts.created"));
       }
       setModalOpen(false);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : "Failed to save branch");
+      toast.error(err instanceof ApiClientError ? err.message : t("branches.toasts.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -71,24 +73,24 @@ export default function BranchesPage() {
     setDeleting(true);
     try {
       await api.delete(`/api/admin/branches/${deleteTarget.id}`);
-      toast.success("Branch deleted");
+      toast.success(t("branches.toasts.deleted"));
       setDeleteTarget(null);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : "Failed to delete branch");
+      toast.error(err instanceof ApiClientError ? err.message : t("branches.toasts.deleteFailed"));
     } finally {
       setDeleting(false);
     }
   };
 
   const columns: Column<Branch>[] = [
-    { key: "nameEn", label: "Branch", sortable: true, render: (b) => (
+    { key: "nameEn", label: t("branches.table.branch"), sortable: true, render: (b) => (
       <div>
         <div className="font-black text-gray-900 dark:text-white">{b.nameEn}</div>
         <div className="text-[10px] text-gray-400 font-bold mt-0.5">{b.addressEn}</div>
       </div>
     ) },
-    { key: "coords", label: "Coordinates", render: (b) => (
+    { key: "coords", label: t("branches.table.coordinates"), render: (b) => (
       <a
         href={`https://maps.google.com/?q=${b.lat},${b.lng}`}
         target="_blank"
@@ -98,12 +100,12 @@ export default function BranchesPage() {
         <MapPinned className="w-3.5 h-3.5" /> {b.lat.toFixed(4)}, {b.lng.toFixed(4)}
       </a>
     ) },
-    { key: "phone", label: "Phone", render: (b) => <span className="font-mono text-gray-500">{b.phone}</span> },
-    { key: "hours", label: "Hours", render: (b) => <span className="text-gray-500">{b.hoursEn}</span> },
-    { key: "actions", label: "Actions", render: (b) => (
+    { key: "phone", label: t("branches.table.phone"), render: (b) => <span className="font-mono text-gray-500">{b.phone}</span> },
+    { key: "hours", label: t("branches.table.hours"), render: (b) => <span className="text-gray-500">{b.hoursEn}</span> },
+    { key: "actions", label: t("common.actions"), render: (b) => (
       <div className="flex items-center gap-2">
-        <button className={iconButtonClass} onClick={() => openEdit(b)} title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
-        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(b)} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
+        <button className={iconButtonClass} onClick={() => openEdit(b)} title={t("common.edit")}><Edit2 className="w-3.5 h-3.5" /></button>
+        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(b)} title={t("common.delete")}><Trash2 className="w-3.5 h-3.5" /></button>}
       </div>
     ) },
   ];
@@ -112,10 +114,10 @@ export default function BranchesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white">Branches</h1>
-          <p className="text-xs text-gray-400 font-medium mt-1">Manage physical branch locations and working hours.</p>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white">{t("branches.title")}</h1>
+          <p className="text-xs text-gray-400 font-medium mt-1">{t("branches.subtitle")}</p>
         </div>
-        {canWrite && <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> New Branch</button>}
+        {canWrite && <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> {t("branches.newBranch")}</button>}
       </div>
 
       <DataTable
@@ -130,60 +132,60 @@ export default function BranchesPage() {
       />
       <Pagination page={list.page} totalPages={list.totalPages} total={list.total} pageSize={list.pageSize} onPageChange={list.setPage} />
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Branch" : "Create Branch"} wide>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t("branches.editBranch") : t("branches.createBranch")} wide>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={labelClass}>Name (Arabic)</label>
+            <label className={labelClass}>{t("branches.nameAr")}</label>
             <input required dir="rtl" value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Name (English)</label>
+            <label className={labelClass}>{t("branches.nameEn")}</label>
             <input required value={form.nameEn} onChange={(e) => setForm({ ...form, nameEn: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Address (Arabic)</label>
+            <label className={labelClass}>{t("branches.addressAr")}</label>
             <input required dir="rtl" value={form.addressAr} onChange={(e) => setForm({ ...form, addressAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Address (English)</label>
+            <label className={labelClass}>{t("branches.addressEn")}</label>
             <input required value={form.addressEn} onChange={(e) => setForm({ ...form, addressEn: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Latitude</label>
+            <label className={labelClass}>{t("branches.latitude")}</label>
             <input required type="number" step="any" value={form.lat} onChange={(e) => setForm({ ...form, lat: e.target.value })} className={`${inputClass} font-mono`} />
           </div>
           <div>
-            <label className={labelClass}>Longitude</label>
+            <label className={labelClass}>{t("branches.longitude")}</label>
             <input required type="number" step="any" value={form.lng} onChange={(e) => setForm({ ...form, lng: e.target.value })} className={`${inputClass} font-mono`} />
           </div>
           <div>
-            <label className={labelClass}>Working Hours (Arabic)</label>
+            <label className={labelClass}>{t("branches.hoursAr")}</label>
             <input required dir="rtl" value={form.hoursAr} onChange={(e) => setForm({ ...form, hoursAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Working Hours (English)</label>
+            <label className={labelClass}>{t("branches.hoursEn")}</label>
             <input required value={form.hoursEn} onChange={(e) => setForm({ ...form, hoursEn: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Phone</label>
+            <label className={labelClass}>{t("branches.phone")}</label>
             <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={`${inputClass} font-mono`} />
           </div>
           <div>
-            <label className={labelClass}>Email</label>
+            <label className={labelClass}>{t("branches.email")}</label>
             <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
           </div>
 
           <div className="md:col-span-2 flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>Cancel</button>
-            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? "Saving..." : "Save Branch"}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>{t("common.cancel")}</button>
+            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? t("common.saving") : t("branches.saveBranch")}</button>
           </div>
         </form>
       </Modal>
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title="Delete Branch"
-        message={`Are you sure you want to delete "${deleteTarget?.nameEn}"?`}
+        title={t("branches.deleteTitle")}
+        message={t("branches.deleteMessage", { name: deleteTarget?.nameEn })}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         loading={deleting}

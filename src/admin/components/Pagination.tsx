@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PaginationProps {
   page: number;
@@ -10,13 +11,14 @@ interface PaginationProps {
 }
 
 export default function Pagination({ page, totalPages, total, pageSize, onPageChange }: PaginationProps) {
+  const { t } = useTranslation();
   const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const end = Math.min(page * pageSize, total);
 
   return (
     <div className="flex items-center justify-between px-1 py-3 text-xs font-bold text-gray-500 dark:text-gray-400">
       <span>
-        {start}-{end} of {total}
+        {start}-{end} {t("common.of")} {total}
       </span>
       <div className="flex items-center gap-2">
         <button
@@ -24,17 +26,17 @@ export default function Pagination({ page, totalPages, total, pageSize, onPageCh
           disabled={page <= 1}
           className="p-1.5 rounded-lg border border-gray-200 dark:border-neutral-700 disabled:opacity-40 hover:bg-slate-50 dark:hover:bg-neutral-800"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" />
         </button>
         <span>
-          Page {page} / {totalPages}
+          {t("common.page")} {page} / {totalPages}
         </span>
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           className="p-1.5 rounded-lg border border-gray-200 dark:border-neutral-700 disabled:opacity-40 hover:bg-slate-50 dark:hover:bg-neutral-800"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
       </div>
     </div>

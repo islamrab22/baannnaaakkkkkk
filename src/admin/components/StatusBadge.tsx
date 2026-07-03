@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const COLOR_MAP: Record<string, string> = {
   PUBLISHED: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
@@ -14,7 +15,23 @@ const COLOR_MAP: Record<string, string> = {
   INACTIVE: "bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-gray-400",
 };
 
+const LABEL_KEY_MAP: Record<string, string> = {
+  PUBLISHED: "contentStatuses.PUBLISHED",
+  DRAFT: "contentStatuses.DRAFT",
+  ARCHIVED: "contentStatuses.ARCHIVED",
+  NEW: "messageStatuses.NEW",
+  READ: "messageStatuses.READ",
+  PENDING: "requestStatuses.PENDING",
+  CONTACTED: "requestStatuses.CONTACTED",
+  APPROVED: "requestStatuses.APPROVED",
+  REJECTED: "requestStatuses.REJECTED",
+  ACTIVE: "common.active",
+  INACTIVE: "common.inactive",
+};
+
 export default function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const cls = COLOR_MAP[status] ?? "bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-gray-400";
-  return <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide ${cls}`}>{status}</span>;
+  const labelKey = LABEL_KEY_MAP[status];
+  return <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide ${cls}`}>{labelKey ? t(labelKey) : status}</span>;
 }
