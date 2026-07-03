@@ -1,4 +1,6 @@
 # ---------- Build stage ----------
+# Full dependencies (incl. devDependencies) so we can generate the Prisma
+# client, build the frontend, and bundle the server.
 FROM node:22-slim AS build
 WORKDIR /app
 
@@ -7,10 +9,12 @@ COPY prisma ./prisma
 RUN npm ci
 
 COPY . .
-RUN npx prisma generate
+# `npm run build` runs `prisma generate` before bundling — see package.json.
 RUN npm run build
 
 # ---------- Production dependencies ----------
+# `prisma` (CLI) is a normal dependency so `prisma migrate deploy` and
+# `prisma generate` are available at runtime without devDependencies.
 FROM node:22-slim AS deps
 WORKDIR /app
 COPY package*.json ./
@@ -30,4 +34,7 @@ COPY package*.json ./
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.cjs"]
+# Applies any pending migrations, then starts the server. Render (and any
+# other platform) injects PORT at runtime — the app reads it via
+# process.env.PORT (see server/config/env.ts), never a hardcoded port.
+CMD ["npm", "run", "start:render"]
