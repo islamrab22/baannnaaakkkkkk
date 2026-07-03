@@ -1,0 +1,6 @@
+{
+  "name": "Bank of Palestine - بنك فلسطين",
+  "description": "A high-fidelity web platform for Bank of Palestine (بنك فلسطين) using the Natural Tones design aesthetic. Features comprehensive financial product directories, dynamic comparison tools, localized multi-channel Arabic/English UI strings, public lead-capture forms, and an Express.js backend content API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
