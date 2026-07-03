@@ -2,6 +2,7 @@ import { messageRepository } from "../repositories/message.repository.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
+import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
 import type { MessageType, MessageStatus, Prisma } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "type", "status"];
@@ -17,14 +18,26 @@ export const messageService = {
     if (!message) throw ApiError.notFound("Message not found");
     return message;
   },
-  create(type: MessageType, input: Record<string, unknown>) {
+  async create(type: MessageType, input: Record<string, unknown>) {
     const clean = sanitizeObjectStrings(input, []);
     const { data, ...rest } = clean as Record<string, unknown>;
-    return messageRepository.create({
+    const message = await messageRepository.create({
       type,
       ...(rest as Prisma.MessageCreateInput),
       data: (data ?? clean) as Prisma.InputJsonValue,
     });
+
+    void sendTelegramNotification(
+      formatTelegramMessage(`📩 New ${type} message`, {
+        Name: message.name,
+        Email: message.email,
+        Phone: message.phone,
+        Subject: message.subject,
+        Message: message.message,
+      })
+    );
+
+    return message;
   },
   async updateStatus(id: string, status: MessageStatus) {
     const existing = await messageRepository.findById(id);

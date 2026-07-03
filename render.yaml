@@ -44,3 +44,9 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      # Optional: Telegram notifications for admin activity and customer
+      # form submissions. Leave unset to disable.
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false

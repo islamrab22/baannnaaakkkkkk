@@ -2,6 +2,7 @@ import { cardRequestRepository } from "../repositories/cardRequest.repository.ts
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
+import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
 import type { Prisma, RequestStatus } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "status", "cardType"];
@@ -17,9 +18,20 @@ export const cardRequestService = {
     if (!request) throw ApiError.notFound("Card request not found");
     return request;
   },
-  create(input: Record<string, unknown>) {
+  async create(input: Record<string, unknown>) {
     const clean = sanitizeObjectStrings(input, []);
-    return cardRequestRepository.create(clean as unknown as Prisma.CardRequestCreateInput);
+    const request = await cardRequestRepository.create(clean as unknown as Prisma.CardRequestCreateInput);
+
+    void sendTelegramNotification(
+      formatTelegramMessage("💳 New card request", {
+        Name: request.name,
+        Phone: request.phone,
+        Email: request.email,
+        "Card type": request.cardType,
+      })
+    );
+
+    return request;
   },
   async update(id: string, input: { status?: RequestStatus; notes?: string }) {
     const existing = await cardRequestRepository.findById(id);
