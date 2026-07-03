@@ -1,18 +1,30 @@
 services:
+  # Deployed from the Dockerfile at the repo root (its CMD runs
+  # `npm run start:render`, i.e. `prisma migrate deploy && node dist/server.cjs`).
   - type: web
     name: bank-of-palestine-cms
-    runtime: node
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     plan: free
     region: oregon
     branch: main
-    buildCommand: npm ci && npm run build
-    startCommand: npm run start:render
     healthCheckPath: /api/health
     envVars:
       # Render injects PORT automatically at runtime — do not set it manually.
       - key: NODE_ENV
         value: production
+      # App runtime connection — on Supabase this is the "Transaction pooler"
+      # (port 6543) connection string.
       - key: DATABASE_URL
+        sync: false
+      # Prisma CLI connection for `migrate deploy` — MUST be a direct
+      # (non-pooled) connection. On Supabase this is the "Direct connection"
+      # string (port 5432), never the pooler URL. Using the pooler here
+      # causes `prisma migrate deploy` to hang indefinitely trying to
+      # acquire its advisory lock, which looks like "No open ports
+      # detected" because the server process never reaches app.listen().
+      - key: DIRECT_URL
         sync: false
       - key: CLIENT_URL
         sync: false

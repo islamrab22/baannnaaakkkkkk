@@ -30,6 +30,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/bankdb?schema=public
+      DIRECT_URL: postgresql://postgres:postgres@postgres:5432/bankdb?schema=public
       CLIENT_URL: http://localhost:3000
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-change-me-access-secret-change-me}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change-me-refresh-secret-change-me}
