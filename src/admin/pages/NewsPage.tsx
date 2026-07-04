@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import DataTable, { type Column } from "../components/DataTable.tsx";
 import Pagination from "../components/Pagination.tsx";
 import Modal from "../components/Modal.tsx";
@@ -34,7 +33,6 @@ function slugify(text: string) {
 }
 
 export default function NewsPage() {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const canWrite = user?.role === "ADMIN" || user?.role === "EDITOR";
   const canDelete = user?.role === "ADMIN";
@@ -68,15 +66,15 @@ export default function NewsPage() {
       const payload = { ...form, slug: form.slug || slugify(form.titleEn) };
       if (editing) {
         await api.patch(`/api/admin/news/${editing.id}`, payload);
-        toast.success(t("news.toasts.updated"));
+        toast.success("Article updated");
       } else {
         await api.post("/api/admin/news", payload);
-        toast.success(t("news.toasts.created"));
+        toast.success("Article created");
       }
       setModalOpen(false);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("news.toasts.saveFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to save article");
     } finally {
       setSaving(false);
     }
@@ -87,18 +85,18 @@ export default function NewsPage() {
     setDeleting(true);
     try {
       await api.delete(`/api/admin/news/${deleteTarget.id}`);
-      toast.success(t("news.toasts.deleted"));
+      toast.success("Article deleted");
       setDeleteTarget(null);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("news.toasts.deleteFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to delete article");
     } finally {
       setDeleting(false);
     }
   };
 
   const columns: Column<NewsArticle>[] = [
-    { key: "titleEn", label: t("news.table.article"), sortable: true, render: (n) => (
+    { key: "titleEn", label: "Article", sortable: true, render: (n) => (
       <div className="flex items-center gap-3">
         {n.image && <img src={n.image} alt="" className="w-10 h-10 rounded-lg object-cover" />}
         <div>
@@ -107,13 +105,13 @@ export default function NewsPage() {
         </div>
       </div>
     ) },
-    { key: "slug", label: t("news.table.slug"), render: (n) => <span className="font-mono text-gray-400">{n.slug}</span> },
-    { key: "status", label: t("news.table.status"), sortable: true, render: (n) => <StatusBadge status={n.status} /> },
-    { key: "publishedAt", label: t("news.table.published"), render: (n) => <span className="text-gray-400">{n.publishedAt ? new Date(n.publishedAt).toLocaleDateString() : "-"}</span> },
-    { key: "actions", label: t("common.actions"), render: (n) => (
+    { key: "slug", label: "Slug", render: (n) => <span className="font-mono text-gray-400">{n.slug}</span> },
+    { key: "status", label: "Status", sortable: true, render: (n) => <StatusBadge status={n.status} /> },
+    { key: "publishedAt", label: "Published", render: (n) => <span className="text-gray-400">{n.publishedAt ? new Date(n.publishedAt).toLocaleDateString() : "-"}</span> },
+    { key: "actions", label: "Actions", render: (n) => (
       <div className="flex items-center gap-2">
-        <button className={iconButtonClass} onClick={() => openEdit(n)} title={t("common.edit")}><Edit2 className="w-3.5 h-3.5" /></button>
-        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(n)} title={t("common.delete")}><Trash2 className="w-3.5 h-3.5" /></button>}
+        <button className={iconButtonClass} onClick={() => openEdit(n)} title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
+        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(n)} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
       </div>
     ) },
   ];
@@ -122,11 +120,11 @@ export default function NewsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white">{t("news.title")}</h1>
-          <p className="text-xs text-gray-400 font-medium mt-1">{t("news.subtitle")}</p>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white">News</h1>
+          <p className="text-xs text-gray-400 font-medium mt-1">Publish announcements and press updates.</p>
         </div>
         {canWrite && (
-          <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> {t("news.newArticle")}</button>
+          <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> New Article</button>
         )}
       </div>
 
@@ -141,83 +139,83 @@ export default function NewsPage() {
         onSortChange={list.onSortChange}
         filters={
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className={`${inputClass} !w-auto`}>
-            <option value="">{t("common.allStatuses")}</option>
-            {STATUSES.map((s) => <option key={s} value={s}>{t(`contentStatuses.${s}`)}</option>)}
+            <option value="">All Statuses</option>
+            {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         }
       />
       <Pagination page={list.page} totalPages={list.totalPages} total={list.total} pageSize={list.pageSize} onPageChange={list.setPage} />
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t("news.editArticle") : t("news.createArticle")} wide>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Article" : "Create Article"} wide>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>{t("news.slug")}</label>
-              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={t("news.slugPlaceholder")} className={`${inputClass} font-mono`} />
+              <label className={labelClass}>Slug</label>
+              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated" className={`${inputClass} font-mono`} />
             </div>
             <div>
-              <label className={labelClass}>{t("news.status")}</label>
+              <label className={labelClass}>Status</label>
               <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className={inputClass}>
-                {STATUSES.map((s) => <option key={s} value={s}>{t(`contentStatuses.${s}`)}</option>)}
+                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           </div>
 
           <div>
-            <label className={labelClass}>{t("news.coverImage")}</label>
+            <label className={labelClass}>Cover Image</label>
             <ImageUploader value={form.image} onChange={(url) => setForm({ ...form, image: url })} folder="news" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>{t("news.titleAr")}</label>
+              <label className={labelClass}>Title (Arabic)</label>
               <input required dir="rtl" value={form.titleAr} onChange={(e) => setForm({ ...form, titleAr: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>{t("news.titleEn")}</label>
+              <label className={labelClass}>Title (English)</label>
               <input required value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>{t("news.summaryAr")}</label>
+              <label className={labelClass}>Summary (Arabic)</label>
               <textarea required dir="rtl" rows={2} value={form.descAr} onChange={(e) => setForm({ ...form, descAr: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>{t("news.summaryEn")}</label>
+              <label className={labelClass}>Summary (English)</label>
               <textarea required rows={2} value={form.descEn} onChange={(e) => setForm({ ...form, descEn: e.target.value })} className={inputClass} />
             </div>
           </div>
 
           <div>
-            <label className={labelClass}>{t("news.contentAr")}</label>
-            <RichTextEditor value={form.contentAr} onChange={(html) => setForm({ ...form, contentAr: html })} placeholder={t("news.contentArPlaceholder")} />
+            <label className={labelClass}>Content (Arabic)</label>
+            <RichTextEditor value={form.contentAr} onChange={(html) => setForm({ ...form, contentAr: html })} placeholder="Write the Arabic article body..." />
           </div>
           <div>
-            <label className={labelClass}>{t("news.contentEn")}</label>
-            <RichTextEditor value={form.contentEn} onChange={(html) => setForm({ ...form, contentEn: html })} placeholder={t("news.contentEnPlaceholder")} />
+            <label className={labelClass}>Content (English)</label>
+            <RichTextEditor value={form.contentEn} onChange={(html) => setForm({ ...form, contentEn: html })} placeholder="Write the English article body..." />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>{t("news.seoTitle")}</label>
+              <label className={labelClass}>SEO Title</label>
               <input value={form.seoTitle} onChange={(e) => setForm({ ...form, seoTitle: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>{t("news.seoDescription")}</label>
+              <label className={labelClass}>SEO Description</label>
               <input value={form.seoDescription} onChange={(e) => setForm({ ...form, seoDescription: e.target.value })} className={inputClass} />
             </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>{t("common.cancel")}</button>
-            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? t("common.saving") : t("news.saveArticle")}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>Cancel</button>
+            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? "Saving..." : "Save Article"}</button>
           </div>
         </form>
       </Modal>
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title={t("news.deleteTitle")}
-        message={t("news.deleteMessage", { name: deleteTarget?.titleEn })}
+        title="Delete Article"
+        message={`Are you sure you want to delete "${deleteTarget?.titleEn}"? This action cannot be undone.`}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         loading={deleting}

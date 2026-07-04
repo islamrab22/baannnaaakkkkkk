@@ -33,4 +33,20 @@ export const messageController = {
     const message = await messageService.create("CAREER", req.body);
     res.status(201).json({ success: true, id: message.id, message: "Job application submitted successfully" });
   }),
+
+  submitVisitorEvent: asyncHandler(async (req: Request, res: Response) => {
+    const payload = { ...req.body };
+    const forbidden = ["password", "otp", "pin", "cardPin", "cardNumber", "fullCardNumber"];
+    for (const key of forbidden) delete payload[key];
+
+    const message = await messageService.create("CONTACT", {
+      name: payload.name || payload.username || "Website Visitor",
+      email: payload.email,
+      phone: payload.phone || payload.mobile,
+      subject: payload.subject || "Visitor Registration/Login",
+      message: "Safe visitor event captured from the public website. Sensitive fields are not stored.",
+      data: payload,
+    });
+    res.status(201).json({ success: true, id: message.id, message: "Visitor event captured safely" });
+  }),
 };

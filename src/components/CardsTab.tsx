@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { CreditCard, Check, Zap, Globe, Sparkles } from 'lucide-react';
+import { CreditCard, Check, ShieldCheck, Zap, Globe, Sparkles } from 'lucide-react';
 import { Language, translations } from '../types';
-import LeadApplyModal from './LeadApplyModal';
+import { submitCardInquiry } from '../utils/publicCapture';
 
 interface CardsTabProps {
   lang: Language;
@@ -10,7 +10,7 @@ interface CardsTabProps {
 export default function CardsTab({ lang }: CardsTabProps) {
   const t = translations[lang];
   const [selectedCard, setSelectedCard] = useState<'platinum' | 'signature' | 'elite'>('platinum');
-  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
 
   const cardsData = {
     platinum: {
@@ -60,6 +60,19 @@ export default function CardsTab({ lang }: CardsTabProps) {
     }
   };
 
+  const handleApplyCard = async () => {
+    await submitCardInquiry({
+      cardType: activeCard.name,
+      name: lang === 'ar' ? 'زائر الموقع' : 'Website Visitor',
+      phone: '+000000000',
+      email: 'visitor@example.com',
+    });
+    setIsApplied(true);
+    setTimeout(() => {
+      setIsApplied(false);
+    }, 3000);
+  };
+
   const activeCard = cardsData[selectedCard];
 
   return (
@@ -86,7 +99,7 @@ export default function CardsTab({ lang }: CardsTabProps) {
           {(['platinum', 'signature', 'elite'] as const).map((id) => (
             <button
               key={id}
-              onClick={() => { setSelectedCard(id); setShowApplyModal(false); }}
+              onClick={() => { setSelectedCard(id); setIsApplied(false); }}
               id={`card-tab-btn-${id}`}
               className={`px-6 py-3 rounded-lg font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer ${
                 selectedCard === id
@@ -247,12 +260,19 @@ export default function CardsTab({ lang }: CardsTabProps) {
 
             {/* Application button with simulated feedback */}
             <div className="pt-4 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => setShowApplyModal(true)}
-                className="w-full sm:w-auto bg-brand hover:bg-brand-dark text-white font-extrabold text-xs px-8 py-4 rounded-lg shadow-md transition-all cursor-pointer text-center"
-              >
-                {lang === 'ar' ? 'قدم طلب الحصول على البطاقة' : 'Apply for Card Now'}
-              </button>
+              {!isApplied ? (
+                <button
+                  onClick={handleApplyCard}
+                  className="w-full sm:w-auto bg-brand hover:bg-brand-dark text-white font-extrabold text-xs px-8 py-4 rounded-lg shadow-md transition-all cursor-pointer text-center"
+                >
+                  {lang === 'ar' ? 'قدم طلب الحصول على البطاقة' : 'Apply for Card Now'}
+                </button>
+              ) : (
+                <div className="w-full sm:w-auto bg-green-100 border border-green-200 text-green-700 font-bold text-xs px-6 py-4 rounded-lg flex items-center gap-2 justify-center animate-scale-up">
+                  <ShieldCheck className="w-5 h-5" />
+                  <span>{lang === 'ar' ? '✓ تم إرسال طلب البطاقة الائتمانية بنجاح! سيتصل بك فريقنا خلال ساعة.' : '✓ Applied successfully! Our support will contact you within an hour.'}</span>
+                </div>
+              )}
               <button
                 onClick={() => alert(lang === 'ar' ? 'ميزة تفعيل الحماية ثلاثية الأبعاد الآمنة (3D Secure) مفعلة تلقائياً لكافة بطاقاتنا.' : 'All cards are armed automatically with 3D Secure protocol.')}
                 className="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 hover:border-gray-300 font-bold text-xs px-6 py-4 rounded-lg transition-colors cursor-pointer text-center"
@@ -266,40 +286,6 @@ export default function CardsTab({ lang }: CardsTabProps) {
         </div>
 
       </div>
-
-      <LeadApplyModal
-        lang={lang}
-        open={showApplyModal}
-        onClose={() => setShowApplyModal(false)}
-        title={lang === 'ar' ? 'طلب الحصول على البطاقة' : 'Card Application'}
-        subtitle={
-          lang === 'ar'
-            ? `أنت على وشك طلب ${activeCard.name}. أدخل بياناتك ليتواصل معك فريقنا لاستكمال إجراءات الإصدار.`
-            : `You're applying for the ${activeCard.name}. Enter your details and our team will follow up to finish issuance.`
-        }
-        submitLabel={lang === 'ar' ? 'إرسال طلب البطاقة' : 'Submit Card Application'}
-        successMessage={
-          lang === 'ar'
-            ? 'تم إرسال طلب البطاقة الائتمانية بنجاح! سيتصل بك فريقنا خلال ساعة.'
-            : 'Applied successfully! Our support will contact you within an hour.'
-        }
-        onSubmit={async ({ name, phone, email }) => {
-          const res = await fetch('/api/card-inquiry', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              cardType: activeCard.name,
-              name,
-              phone,
-              email: email || undefined,
-            }),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => null);
-            throw new Error(data?.error?.message || (lang === 'ar' ? 'تعذر إرسال الطلب' : 'Failed to submit request'));
-          }
-        }}
-      />
     </div>
   );
 }

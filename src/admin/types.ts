@@ -180,3 +180,18 @@ export interface DashboardStats {
   loanRequests: { pending: number; byStatus: { status: string; count: number }[] };
   cardRequests: { pending: number };
 }
+
+
+export interface PublicSubmission {
+  id: string;
+  type: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  subject?: string;
+  message?: string;
+  data?: Record<string, unknown>;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}

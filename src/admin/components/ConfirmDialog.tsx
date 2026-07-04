@@ -1,6 +1,5 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import Modal from "./Modal.tsx";
 
 interface ConfirmDialogProps {
@@ -13,7 +12,6 @@ interface ConfirmDialogProps {
 }
 
 export default function ConfirmDialog({ open, title, message, onCancel, onConfirm, loading }: ConfirmDialogProps) {
-  const { t } = useTranslation();
   return (
     <Modal open={open} onClose={onCancel} title={title}>
       <div className="flex items-start gap-3 mb-6">
@@ -27,14 +25,14 @@ export default function ConfirmDialog({ open, title, message, onCancel, onConfir
           onClick={onCancel}
           className="px-4 py-2 rounded-lg text-xs font-bold border border-gray-200 dark:border-neutral-700 hover:bg-slate-50 dark:hover:bg-neutral-800"
         >
-          {t("common.cancel")}
+          Cancel
         </button>
         <button
           onClick={onConfirm}
           disabled={loading}
           className="px-4 py-2 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white disabled:opacity-60"
         >
-          {loading ? t("common.deleting") : t("common.delete")}
+          {loading ? "Deleting..." : "Delete"}
         </button>
       </div>
     </Modal>

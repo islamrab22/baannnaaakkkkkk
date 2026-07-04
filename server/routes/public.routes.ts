@@ -10,9 +10,10 @@ import { messageController } from "../controllers/message.controller.ts";
 import { loanRequestController } from "../controllers/loanRequest.controller.ts";
 import { cardRequestController } from "../controllers/cardRequest.controller.ts";
 import { miscController } from "../controllers/misc.controller.ts";
+import { submissionController } from "../controllers/submission.controller.ts";
 import { validate } from "../middleware/validate.middleware.ts";
 import { writeRateLimiter } from "../middleware/rateLimit.middleware.ts";
-import { createContactMessageSchema, createNewsletterSchema, createCareerMessageSchema } from "../validators/message.validators.ts";
+import { createContactMessageSchema, createNewsletterSchema, createCareerMessageSchema, createVisitorEventSchema } from "../validators/message.validators.ts";
 import { createLoanRequestSchema } from "../validators/loanRequest.validators.ts";
 import { createCardRequestSchema } from "../validators/cardRequest.validators.ts";
 
@@ -53,5 +54,7 @@ router.post("/newsletter/subscribe", writeRateLimiter, validate({ body: createNe
 router.post("/loan-inquiry", writeRateLimiter, validate({ body: createLoanRequestSchema }), loanRequestController.submit);
 router.post("/card-inquiry", writeRateLimiter, validate({ body: createCardRequestSchema }), cardRequestController.submit);
 router.post("/careers/apply", writeRateLimiter, validate({ body: createCareerMessageSchema }), messageController.submitCareer);
+router.post("/visitor-event", writeRateLimiter, validate({ body: createVisitorEventSchema }), messageController.submitVisitorEvent);
+router.post("/submissions", writeRateLimiter, submissionController.create);
 
 export default router;

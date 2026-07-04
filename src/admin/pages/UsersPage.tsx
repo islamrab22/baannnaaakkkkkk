@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import DataTable, { type Column } from "../components/DataTable.tsx";
 import Pagination from "../components/Pagination.tsx";
 import Modal from "../components/Modal.tsx";
@@ -19,7 +18,6 @@ type UserForm = { name: string; email: string; password: string; role: Role; isA
 const EMPTY_FORM: UserForm = { name: "", email: "", password: "", role: "VIEWER", isActive: true };
 
 export default function UsersPage() {
-  const { t } = useTranslation();
   const { user: currentUser } = useAuth();
   const list = useResourceList<AdminUserRecord>({ basePath: "/api/admin/users", defaultSortBy: "name" });
 
@@ -45,15 +43,15 @@ export default function UsersPage() {
         const payload: Record<string, unknown> = { name: form.name, email: form.email, role: form.role, isActive: form.isActive };
         if (form.password) payload.password = form.password;
         await api.patch(`/api/admin/users/${editing.id}`, payload);
-        toast.success(t("users.toasts.updated"));
+        toast.success("User updated");
       } else {
         await api.post("/api/admin/users", form);
-        toast.success(t("users.toasts.created"));
+        toast.success("User created");
       }
       setModalOpen(false);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("users.toasts.saveFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to save user");
     } finally {
       setSaving(false);
     }
@@ -64,31 +62,31 @@ export default function UsersPage() {
     setDeleting(true);
     try {
       await api.delete(`/api/admin/users/${deleteTarget.id}`);
-      toast.success(t("users.toasts.deleted"));
+      toast.success("User deleted");
       setDeleteTarget(null);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("users.toasts.deleteFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to delete user");
     } finally {
       setDeleting(false);
     }
   };
 
   const columns: Column<AdminUserRecord>[] = [
-    { key: "name", label: t("users.table.name"), sortable: true, render: (u) => (
+    { key: "name", label: "Name", sortable: true, render: (u) => (
       <div>
         <div className="font-black text-gray-900 dark:text-white">{u.name}</div>
         <div className="text-[10px] text-gray-400 font-bold">{u.email}</div>
       </div>
     ) },
-    { key: "role", label: t("users.table.role"), sortable: true, render: (u) => <span className="font-black text-[10px] uppercase">{t(`roles.${u.role}`)}</span> },
-    { key: "isActive", label: t("users.table.status"), render: (u) => <StatusBadge status={u.isActive ? "ACTIVE" : "INACTIVE"} /> },
-    { key: "lastLoginAt", label: t("users.table.lastLogin"), render: (u) => <span className="text-gray-400">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : t("common.never")}</span> },
-    { key: "actions", label: t("common.actions"), render: (u) => (
+    { key: "role", label: "Role", sortable: true, render: (u) => <span className="font-black text-[10px] uppercase">{u.role}</span> },
+    { key: "isActive", label: "Status", render: (u) => <StatusBadge status={u.isActive ? "ACTIVE" : "INACTIVE"} /> },
+    { key: "lastLoginAt", label: "Last Login", render: (u) => <span className="text-gray-400">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : "Never"}</span> },
+    { key: "actions", label: "Actions", render: (u) => (
       <div className="flex items-center gap-2">
-        <button className={iconButtonClass} onClick={() => openEdit(u)} title={t("common.edit")}><Edit2 className="w-3.5 h-3.5" /></button>
+        <button className={iconButtonClass} onClick={() => openEdit(u)} title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
         {currentUser?.id !== u.id && (
-          <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(u)} title={t("common.delete")}><Trash2 className="w-3.5 h-3.5" /></button>
+          <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(u)} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
         )}
       </div>
     ) },
@@ -98,10 +96,10 @@ export default function UsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white">{t("users.title")}</h1>
-          <p className="text-xs text-gray-400 font-medium mt-1">{t("users.subtitle")}</p>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white">Users</h1>
+          <p className="text-xs text-gray-400 font-medium mt-1">Manage staff accounts and role-based access.</p>
         </div>
-        <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> {t("users.newUser")}</button>
+        <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> New User</button>
       </div>
 
       <DataTable
@@ -116,43 +114,43 @@ export default function UsersPage() {
       />
       <Pagination page={list.page} totalPages={list.totalPages} total={list.total} pageSize={list.pageSize} onPageChange={list.setPage} />
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t("users.editUser") : t("users.createUser")}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit User" : "Create User"}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className={labelClass}>{t("users.fullName")}</label>
+            <label className={labelClass}>Full Name</label>
             <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("users.email")}</label>
+            <label className={labelClass}>Email</label>
             <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{editing ? t("users.passwordEditHint") : t("users.password")}</label>
+            <label className={labelClass}>{editing ? "New Password (leave blank to keep unchanged)" : "Password"}</label>
             <input type="password" required={!editing} minLength={8} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("users.role")}</label>
+            <label className={labelClass}>Role</label>
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })} className={inputClass}>
-              {ROLES.map((r) => <option key={r} value={r}>{t(`roles.${r}`)}</option>)}
+              {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
           {editing && (
             <label className="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-300">
               <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} />
-              {t("users.accountActive")}
+              Account active
             </label>
           )}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>{t("common.cancel")}</button>
-            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? t("common.saving") : t("users.saveUser")}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>Cancel</button>
+            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? "Saving..." : "Save User"}</button>
           </div>
         </form>
       </Modal>
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title={t("users.deleteTitle")}
-        message={t("users.deleteMessage", { name: deleteTarget?.name })}
+        title="Delete User"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? They will immediately lose access.`}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         loading={deleting}
