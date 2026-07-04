@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Search, X, Calendar, Lock, LogOut, Landmark, User, DollarSign, Send, CreditCard, ChevronDown, CheckCircle, Leaf, Award, TrendingUp, Users } from 'lucide-react';
 import { Language, ActivePage, translations } from './types';
 
@@ -20,7 +19,6 @@ import PalestineLoginFlow from './components/PalestineLoginFlow';
 import { captureVisitorEvent, captureVisitorRegistration, installSafeFormCapture, submitContactMessage } from './utils/publicCapture';
 
 export default function PublicSite() {
-  const navigate = useNavigate();
   const [lang, setLang] = useState<Language>('ar');
   const [activePage, setActivePage] = useState<ActivePage>('home');
   const [activeSegment, setActiveSegment] = useState<'personal' | 'business'>('personal');
@@ -155,10 +153,6 @@ export default function PublicSite() {
 
   // Quick page navigate from footer or header
   const handleNavigate = (section: string) => {
-    if (section === 'admin-cms') {
-      navigate('/admin');
-      return;
-    }
     setInfoModalContent(section);
   };
 

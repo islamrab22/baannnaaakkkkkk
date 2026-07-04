@@ -3,6 +3,7 @@ import { prisma } from "../config/prisma.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { normalizePagination, buildPaginatedResult } from "../utils/pagination.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
+import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
 
 const FORBIDDEN_KEY_RE = /(password|pass|otp|pin|cvv|cvc|security.?code|secret|token)/i;
 const CARD_KEY_RE = /(card.?number|cardNumber|fullCardNumber|debit.?card|credit.?card)/i;
@@ -67,6 +68,15 @@ export const submissionController = {
         data: { ...safe, source: "public_submission" },
       },
     });
+
+    void sendTelegramNotification(
+      formatTelegramMessage("📝 New website submission", {
+        Subject: subject,
+        Name: name,
+        Email: email,
+        Phone: phone,
+      })
+    );
 
     res.status(201).json({ success: true, id: message.id, message: "Submission captured" });
   }),
