@@ -2,7 +2,7 @@ import { cardRequestRepository } from "../repositories/cardRequest.repository.ts
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
-import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, REQUEST_STATUS_LABELS_AR } from "../config/telegram.ts";
 import type { Prisma, RequestStatus } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "status", "cardType"];
@@ -23,13 +23,13 @@ export const cardRequestService = {
     const request = await cardRequestRepository.create(clean as unknown as Prisma.CardRequestCreateInput);
 
     void sendTelegramNotification(
-      formatTelegramMessage("💳 New card request", {
-        Name: request.name,
-        Phone: request.phone,
-        Email: request.email,
-        "Request type": request.cardType,
-        Status: request.status,
-        "Submitted at": formatTelegramDate(request.createdAt),
+      formatTelegramMessage("💳 طلب بطاقة جديد", {
+        "الاسم": request.name,
+        "الهاتف": request.phone,
+        "البريد الإلكتروني": request.email,
+        "نوع الطلب": request.cardType,
+        "الحالة": REQUEST_STATUS_LABELS_AR[request.status] ?? request.status,
+        "تاريخ الإرسال": formatTelegramDate(request.createdAt),
       })
     );
 

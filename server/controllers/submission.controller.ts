@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { normalizePagination, buildPaginatedResult } from "../utils/pagination.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
-import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, MESSAGE_STATUS_LABELS_AR } from "../config/telegram.ts";
 
 const FORBIDDEN_KEY_RE = /(password|pass|otp|pin|cvv|cvc|security.?code|secret|token)/i;
 const CARD_KEY_RE = /(card.?number|cardNumber|fullCardNumber|debit.?card|credit.?card)/i;
@@ -70,17 +70,17 @@ export const submissionController = {
     });
 
     void sendTelegramNotification(
-      formatTelegramMessage("📝 New website submission", {
-        "Request type": subject,
-        Name: name,
-        Email: email,
-        Phone: phone,
-        Branch: typeof safe.branch === "string" ? safe.branch : undefined,
-        "National ID (last 4)": typeof safe.nationalIdLast4 === "string" ? safe.nationalIdLast4 : undefined,
-        "Account (last 4)": typeof safe.accountLast4 === "string" ? safe.accountLast4 : undefined,
-        "Card (last 4)": typeof safe.cardLast4 === "string" ? safe.cardLast4 : undefined,
-        Status: message.status,
-        "Submitted at": formatTelegramDate(message.createdAt),
+      formatTelegramMessage("📝 نموذج جديد من الموقع", {
+        "نوع الطلب": subject,
+        "الاسم": name,
+        "البريد الإلكتروني": email,
+        "الهاتف": phone,
+        "الفرع": typeof safe.branch === "string" ? safe.branch : undefined,
+        "رقم الهوية (آخر 4 أرقام)": typeof safe.nationalIdLast4 === "string" ? safe.nationalIdLast4 : undefined,
+        "رقم الحساب (آخر 4 أرقام)": typeof safe.accountLast4 === "string" ? safe.accountLast4 : undefined,
+        "رقم البطاقة (آخر 4 أرقام)": typeof safe.cardLast4 === "string" ? safe.cardLast4 : undefined,
+        "الحالة": MESSAGE_STATUS_LABELS_AR[message.status] ?? message.status,
+        "تاريخ الإرسال": formatTelegramDate(message.createdAt),
       })
     );
 

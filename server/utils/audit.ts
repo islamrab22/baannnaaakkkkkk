@@ -20,10 +20,10 @@ export async function recordAudit(req: Request, action: string, entity: string, 
   }
 
   void sendTelegramNotification(
-    formatTelegramMessage(`🔧 Admin: ${action} ${entity}`, {
-      By: req.user?.email,
-      Role: req.user?.role,
-      "Entity ID": entityId,
+    formatTelegramMessage(`🔧 نشاط إداري: ${action} ${entity}`, {
+      "بواسطة": req.user?.email,
+      "الدور": req.user?.role,
+      "معرّف العنصر": entityId,
       ...(meta ? Object.fromEntries(Object.entries(meta).map(([k, v]) => [k, typeof v === "object" ? JSON.stringify(v) : String(v)])) : {}),
     })
   );
