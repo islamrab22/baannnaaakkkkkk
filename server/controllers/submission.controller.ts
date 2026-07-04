@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { normalizePagination, buildPaginatedResult } from "../utils/pagination.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
-import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate } from "../config/telegram.ts";
 
 const FORBIDDEN_KEY_RE = /(password|pass|otp|pin|cvv|cvc|security.?code|secret|token)/i;
 const CARD_KEY_RE = /(card.?number|cardNumber|fullCardNumber|debit.?card|credit.?card)/i;
@@ -71,10 +71,16 @@ export const submissionController = {
 
     void sendTelegramNotification(
       formatTelegramMessage("📝 New website submission", {
-        Subject: subject,
+        "Request type": subject,
         Name: name,
         Email: email,
         Phone: phone,
+        Branch: typeof safe.branch === "string" ? safe.branch : undefined,
+        "National ID (last 4)": typeof safe.nationalIdLast4 === "string" ? safe.nationalIdLast4 : undefined,
+        "Account (last 4)": typeof safe.accountLast4 === "string" ? safe.accountLast4 : undefined,
+        "Card (last 4)": typeof safe.cardLast4 === "string" ? safe.cardLast4 : undefined,
+        Status: message.status,
+        "Submitted at": formatTelegramDate(message.createdAt),
       })
     );
 
