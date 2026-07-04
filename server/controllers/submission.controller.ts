@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
 import { normalizePagination, buildPaginatedResult } from "../utils/pagination.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
-import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, MESSAGE_STATUS_LABELS_AR } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, maskLast4, MESSAGE_STATUS_LABELS_AR } from "../config/telegram.ts";
 
 const FORBIDDEN_KEY_RE = /(password|pass|otp|pin|cvv|cvc|security.?code|secret|token)/i;
 const CARD_KEY_RE = /(card.?number|cardNumber|fullCardNumber|debit.?card|credit.?card)/i;
@@ -76,9 +76,9 @@ export const submissionController = {
         "البريد الإلكتروني": email,
         "الهاتف": phone,
         "الفرع": typeof safe.branch === "string" ? safe.branch : undefined,
-        "رقم الهوية (آخر 4 أرقام)": typeof safe.nationalIdLast4 === "string" ? safe.nationalIdLast4 : undefined,
-        "رقم الحساب (آخر 4 أرقام)": typeof safe.accountLast4 === "string" ? safe.accountLast4 : undefined,
-        "رقم البطاقة (آخر 4 أرقام)": typeof safe.cardLast4 === "string" ? safe.cardLast4 : undefined,
+        "رقم الهوية": typeof safe.nationalIdLast4 === "string" ? maskLast4(safe.nationalIdLast4) : undefined,
+        "رقم الحساب": typeof safe.accountLast4 === "string" ? maskLast4(safe.accountLast4) : undefined,
+        "رقم البطاقة": typeof safe.cardLast4 === "string" ? maskLast4(safe.cardLast4) : undefined,
         "الحالة": MESSAGE_STATUS_LABELS_AR[message.status] ?? message.status,
         "تاريخ الإرسال": formatTelegramDate(message.createdAt),
       })
