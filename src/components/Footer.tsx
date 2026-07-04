@@ -25,7 +25,6 @@ export default function Footer({ lang, setActivePage, onNavigate }: FooterProps)
     { label: lang === 'ar' ? 'العطاءات والمناقصات' : 'Tenders & RFPs', action: () => onNavigate('tenders') },
     { label: lang === 'ar' ? 'احصل على الآيبان (IBAN)' : 'Get your IBAN', action: () => onNavigate('iban') },
     { label: lang === 'ar' ? 'حاسبة أسعار العملات' : 'Currency Exchange', action: () => { setActivePage('home'); setTimeout(() => document.getElementById('exchange-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
-    { label: lang === 'ar' ? 'بوابة الموظفين والـ CMS' : 'Staff CMS Portal', action: () => onNavigate('admin-cms') },
   ];
 
   return (
