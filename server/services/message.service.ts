@@ -2,7 +2,7 @@ import { messageRepository } from "../repositories/message.repository.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
-import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, MESSAGE_TYPE_TITLES_AR, MESSAGE_STATUS_LABELS_AR } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, maskLast4, MESSAGE_TYPE_TITLES_AR, MESSAGE_STATUS_LABELS_AR } from "../config/telegram.ts";
 import type { MessageType, MessageStatus, Prisma } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "type", "status"];
@@ -35,9 +35,9 @@ export const messageService = {
         "الهاتف": message.phone,
         "نوع الطلب": message.subject,
         "الفرع": typeof extra.branch === "string" ? extra.branch : undefined,
-        "رقم الهوية (آخر 4 أرقام)": typeof extra.nationalIdLast4 === "string" ? extra.nationalIdLast4 : undefined,
-        "رقم الحساب (آخر 4 أرقام)": typeof extra.accountLast4 === "string" ? extra.accountLast4 : undefined,
-        "رقم البطاقة (آخر 4 أرقام)": typeof extra.cardLast4 === "string" ? extra.cardLast4 : undefined,
+        "رقم الهوية": typeof extra.nationalIdLast4 === "string" ? maskLast4(extra.nationalIdLast4) : undefined,
+        "رقم الحساب": typeof extra.accountLast4 === "string" ? maskLast4(extra.accountLast4) : undefined,
+        "رقم البطاقة": typeof extra.cardLast4 === "string" ? maskLast4(extra.cardLast4) : undefined,
         "الرسالة": message.message,
         "الحالة": MESSAGE_STATUS_LABELS_AR[message.status] ?? message.status,
         "تاريخ الإرسال": formatTelegramDate(message.createdAt),

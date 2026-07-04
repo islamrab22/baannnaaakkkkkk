@@ -52,6 +52,10 @@ export function formatTelegramDate(date: Date): string {
   return `${date.toISOString().replace("T", " ").slice(0, 19)} UTC`;
 }
 
+export function maskLast4(last4: string): string {
+  return `**** ${last4}`;
+}
+
 export const MESSAGE_STATUS_LABELS_AR: Record<string, string> = {
   NEW: "جديدة",
   READ: "مقروءة",
