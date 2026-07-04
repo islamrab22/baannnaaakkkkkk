@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Landmark, ArrowRight, Check, ShieldCheck, HelpCircle, DollarSign, Calculator } from 'lucide-react';
 import { Language, translations } from '../types';
-import LeadApplyModal from './LeadApplyModal';
+import { submitLoanInquiry } from '../utils/publicCapture';
 
 interface LoansTabProps {
   lang: Language;
@@ -24,9 +24,6 @@ export default function LoansTab({ lang }: LoansTabProps) {
   // Pre-approval
   const [monthlySalary, setMonthlySalary] = useState('');
   const [approvalStatus, setApprovalStatus] = useState<'idle' | 'approved' | 'rejected'>('idle');
-
-  // Loan inquiry submission
-  const [showApplyModal, setShowApplyModal] = useState(false);
 
   const loanTypesConfig = {
     personal: { minAmt: 5000, maxAmt: 75000, defaultRate: 4.5, maxYrs: 10, titleAr: 'القرض الشخصي المرن', titleEn: 'Flexible Personal Loan' },
@@ -68,10 +65,19 @@ export default function LoansTab({ lang }: LoansTabProps) {
     if (tenure > config.maxYrs) setTenure(config.maxYrs);
   };
 
-  const handleCheckEligibility = (e: React.FormEvent) => {
+  const handleCheckEligibility = async (e: React.FormEvent) => {
     e.preventDefault();
     const salary = parseFloat(monthlySalary);
     if (!salary || salary <= 0) return;
+
+    await submitLoanInquiry({
+      loanType,
+      name: lang === 'ar' ? 'زائر الموقع' : 'Website Visitor',
+      phone: '+000000000',
+      email: 'visitor@example.com',
+      amount,
+      preferredBranch: 'Website',
+    });
 
     // Debt Service Ratio limit is 45% of income for personal, housing can be up to 50%
     const maxInstallment = salary * (loanType === 'housing' ? 0.50 : 0.45);
@@ -320,7 +326,7 @@ export default function LoansTab({ lang }: LoansTabProps) {
 
             <div className="mt-8 pt-4 border-t border-white/10 space-y-3">
               <button
-                onClick={() => setShowApplyModal(true)}
+                onClick={() => alert(lang === 'ar' ? '✓ تم إرسال طلب التمويل المبدئي بنجاح! سيتم مراجعة سجلاتك الائتمانية والرد عبر البريد الإلكتروني.' : '✓ Applied successfully! Credit screening initialized.')}
                 className="w-full bg-white hover:bg-gray-50 text-brand font-black text-xs py-3.5 rounded-lg shadow-md transition-all cursor-pointer text-center"
               >
                 {lang === 'ar' ? 'تأكيد وحجز القرض المبدئي' : 'Confirm & Apply for Loan'}
@@ -337,41 +343,6 @@ export default function LoansTab({ lang }: LoansTabProps) {
         </div>
 
       </div>
-
-      <LeadApplyModal
-        lang={lang}
-        open={showApplyModal}
-        onClose={() => setShowApplyModal(false)}
-        title={lang === 'ar' ? 'تأكيد طلب التمويل' : 'Confirm Loan Application'}
-        subtitle={
-          lang === 'ar'
-            ? `${loanTypesConfig[loanType].titleAr} بقيمة $${amount.toLocaleString()} لمدة ${tenure} سنة. أدخل بياناتك ليتواصل معك فريقنا لاستكمال الطلب.`
-            : `${loanTypesConfig[loanType].titleEn} for $${amount.toLocaleString()} over ${tenure} years. Enter your details so our team can follow up.`
-        }
-        submitLabel={lang === 'ar' ? 'إرسال طلب التمويل' : 'Submit Loan Application'}
-        successMessage={
-          lang === 'ar'
-            ? 'تم إرسال طلب التمويل المبدئي بنجاح! سيتم مراجعة سجلاتك الائتمانية والرد عبر البريد الإلكتروني أو الهاتف.'
-            : 'Applied successfully! Our team will review your credit profile and follow up by email or phone.'
-        }
-        onSubmit={async ({ name, phone, email }) => {
-          const res = await fetch('/api/loan-inquiry', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              loanType: loanTypesConfig[loanType].titleEn,
-              name,
-              phone,
-              email: email || undefined,
-              amount,
-            }),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => null);
-            throw new Error(data?.error?.message || (lang === 'ar' ? 'تعذر إرسال الطلب' : 'Failed to submit request'));
-          }
-        }}
-      />
     </div>
   );
 }

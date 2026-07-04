@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Lock, ShieldCheck, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext.tsx";
 import { ApiClientError } from "../api/client.ts";
 import { inputClass, labelClass } from "../components/formClasses.ts";
 
 export default function LoginPage() {
-  const { t } = useTranslation();
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,21 +27,21 @@ export default function LoginPage() {
       await login(email, password);
       navigate("/admin", { replace: true });
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : t("login.errorGeneric"));
+      setError(err instanceof ApiClientError ? err.message : "Unable to sign in. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-50 dark:bg-neutral-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8 space-y-2">
           <div className="w-12 h-12 bg-brand/10 text-brand rounded-full flex items-center justify-center mx-auto">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h1 className="text-lg font-black text-gray-900 dark:text-white">{t("login.title")}</h1>
-          <p className="text-xs text-gray-400 font-medium">{t("login.subtitle")}</p>
+          <h1 className="text-lg font-black text-gray-900 dark:text-white">Bank of Palestine CMS</h1>
+          <p className="text-xs text-gray-400 font-medium">Secure staff sign-in for the administration console</p>
         </div>
 
         {error && (
@@ -54,11 +52,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className={labelClass}>{t("login.email")}</label>
+            <label className={labelClass}>Email</label>
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} autoComplete="email" />
           </div>
           <div>
-            <label className={labelClass}>{t("login.password")}</label>
+            <label className={labelClass}>Password</label>
             <input
               type="password"
               required
@@ -74,7 +72,7 @@ export default function LoginPage() {
             className="w-full bg-brand hover:bg-brand-dark text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
-            <span>{submitting ? t("login.signingIn") : t("login.signIn")}</span>
+            <span>Sign In Securely</span>
           </button>
         </form>
       </div>

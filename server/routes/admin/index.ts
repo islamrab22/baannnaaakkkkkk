@@ -11,6 +11,7 @@ import cardRequestsRoutes from "./cardRequests.routes.ts";
 import settingsRoutes from "./settings.routes.ts";
 import dashboardRoutes from "./dashboard.routes.ts";
 import uploadRoutes from "./upload.routes.ts";
+import submissionsRoutes from "./submissions.routes.ts";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/card-requests", cardRequestsRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/upload", uploadRoutes);
+router.use("/submissions", submissionsRoutes);
 
 export default router;

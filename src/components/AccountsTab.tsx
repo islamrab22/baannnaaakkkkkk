@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Landmark, Check, UserPlus, FileText, ArrowLeft, ArrowRight, ShieldCheck, Download } from 'lucide-react';
 import { Language, translations } from '../types';
+import { captureVisitorEvent, last4 } from '../utils/publicCapture';
 
 interface AccountsTabProps {
   lang: Language;
@@ -12,14 +13,10 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
   const [formStep, setFormStep] = useState(1);
   const [fullName, setFullName] = useState('');
   const [nationalId, setNationalId] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [accountType, setAccountType] = useState('savings');
   const [initialDeposit, setInitialDeposit] = useState('500');
   const [jobTitle, setJobTitle] = useState('');
   const [generatedIban, setGeneratedIban] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const accounts = [
     {
@@ -61,45 +58,21 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
     e.preventDefault();
     if (formStep === 1) {
       setFormStep(2);
-      return;
-    }
-
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const selectedAccount = accounts.find((a) => a.id === accountType);
-      const message = [
-        `Account type: ${selectedAccount?.title ?? accountType}`,
-        `National ID / Passport: ${nationalId}`,
-        `Job title: ${jobTitle}`,
-        `Initial deposit: $${initialDeposit}`,
-      ].join('\n');
-
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: fullName,
-          email,
-          phone,
-          subject: `New Account Application - ${selectedAccount?.title ?? accountType}`,
-          message,
-        }),
+    } else {
+      await captureVisitorEvent({
+        subject: 'Account Opening Request',
+        name: fullName || 'Website Visitor',
+        method: 'Account Opening',
+        accountType,
+        initialDeposit,
+        jobTitle,
+        nationalIdLast4: last4(nationalId),
+        language: lang,
       });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error?.message || (lang === 'ar' ? 'تعذر إرسال الطلب' : 'Failed to submit application'));
-      }
-
-      // Generate a mock international standard IBAN for the confirmation receipt
+      // Generate a mock international standard IBAN
       const randomDigits = Math.floor(1000000000000000 + Math.random() * 9000000000000000);
       setGeneratedIban(`JO52INIB4910${randomDigits}`);
       setFormStep(3);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : (lang === 'ar' ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred'));
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -107,11 +80,8 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
     setFormStep(1);
     setFullName('');
     setNationalId('');
-    setPhone('');
-    setEmail('');
     setJobTitle('');
     setInitialDeposit('500');
-    setSubmitError(null);
     setShowApplyForm(false);
   };
 
@@ -320,26 +290,10 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
                     <input
                       type="tel"
                       required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
                       placeholder={lang === 'ar' ? '079XXXXXXX' : '+962 79 123 4567'}
                       className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 text-xs font-medium focus:ring-1 focus:ring-brand focus:outline-none text-right"
                     />
                   </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-gray-700 block mb-1">
-                    {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={lang === 'ar' ? 'ادخل بريدك الإلكتروني' : 'e.g. sarah@example.com'}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 text-xs font-medium focus:ring-1 focus:ring-brand focus:outline-none text-right"
-                  />
                 </div>
 
                 <button
@@ -405,12 +359,6 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
                   </p>
                 </div>
 
-                {submitError && (
-                  <div className="bg-rose-50 text-rose-700 border border-rose-150 p-3 rounded-lg text-xs font-bold text-center">
-                    {submitError}
-                  </div>
-                )}
-
                 <div className="flex gap-4 mt-8">
                   <button
                     type="button"
@@ -421,12 +369,9 @@ export default function AccountsTab({ lang }: AccountsTabProps) {
                   </button>
                   <button
                     type="submit"
-                    disabled={submitting}
-                    className="flex-1 bg-brand hover:bg-brand-dark text-white font-extrabold text-xs py-3.5 rounded-lg shadow-md transition-colors cursor-pointer disabled:opacity-60"
+                    className="flex-1 bg-brand hover:bg-brand-dark text-white font-extrabold text-xs py-3.5 rounded-lg shadow-md transition-colors cursor-pointer"
                   >
-                    {submitting
-                      ? (lang === 'ar' ? 'جارِ الإرسال...' : 'Submitting...')
-                      : (lang === 'ar' ? 'تأكيد الحساب ومصادقة الهوية' : 'Verify & Setup Account')}
+                    {lang === 'ar' ? 'تأكيد الحساب ومصادقة الهوية' : 'Verify & Setup Account'}
                   </button>
                 </div>
               </form>

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
-  LayoutDashboard, Package, Newspaper, Megaphone, MapPin, Mail, Landmark, CreditCard,
+  LayoutDashboard, Package, Newspaper, Megaphone, MapPin, Mail, Inbox, Landmark, CreditCard,
   Users, Settings, UserCircle, LogOut, Moon, Sun, Menu, ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.tsx";
@@ -11,27 +10,27 @@ import type { Role } from "../types.ts";
 
 interface NavItem {
   to: string;
-  labelKey: string;
+  label: string;
   icon: React.ComponentType<{ className?: string }>;
   roles?: Role[];
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/admin", labelKey: "nav.dashboard", icon: LayoutDashboard },
-  { to: "/admin/products", labelKey: "nav.products", icon: Package },
-  { to: "/admin/news", labelKey: "nav.news", icon: Newspaper },
-  { to: "/admin/campaigns", labelKey: "nav.campaigns", icon: Megaphone },
-  { to: "/admin/branches", labelKey: "nav.branches", icon: MapPin },
-  { to: "/admin/messages", labelKey: "nav.messages", icon: Mail },
-  { to: "/admin/loan-requests", labelKey: "nav.loanRequests", icon: Landmark },
-  { to: "/admin/card-requests", labelKey: "nav.cardRequests", icon: CreditCard },
-  { to: "/admin/users", labelKey: "nav.users", icon: Users, roles: ["ADMIN"] },
-  { to: "/admin/settings", labelKey: "nav.settings", icon: Settings, roles: ["ADMIN"] },
-  { to: "/admin/profile", labelKey: "nav.profile", icon: UserCircle },
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/news", label: "News", icon: Newspaper },
+  { to: "/admin/campaigns", label: "Campaigns", icon: Megaphone },
+  { to: "/admin/branches", label: "Branches", icon: MapPin },
+  { to: "/admin/messages", label: "Messages", icon: Mail },
+  { to: "/admin/submissions", label: "All Submissions", icon: Inbox },
+  { to: "/admin/loan-requests", label: "Loan Requests", icon: Landmark },
+  { to: "/admin/card-requests", label: "Card Requests", icon: CreditCard },
+  { to: "/admin/users", label: "Users", icon: Users, roles: ["ADMIN"] },
+  { to: "/admin/settings", label: "Settings", icon: Settings, roles: ["ADMIN"] },
+  { to: "/admin/profile", label: "Profile", icon: UserCircle },
 ];
 
 export default function AdminLayout() {
-  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -51,8 +50,8 @@ export default function AdminLayout() {
           <ShieldCheck className="w-5 h-5" />
         </div>
         <div>
-          <h1 className="text-sm font-black text-gray-900 dark:text-white leading-none">{t("layout.appName")}</h1>
-          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t("layout.adminConsole")}</span>
+          <h1 className="text-sm font-black text-gray-900 dark:text-white leading-none">Bank CMS</h1>
+          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Admin Console</span>
         </div>
       </div>
 
@@ -72,7 +71,7 @@ export default function AdminLayout() {
             }
           >
             <item.icon className="w-4 h-4 shrink-0" />
-            <span>{t(item.labelKey)}</span>
+            <span>{item.label}</span>
           </NavLink>
         ))}
       </nav>
@@ -84,9 +83,7 @@ export default function AdminLayout() {
           </div>
           <div className="min-w-0">
             <div className="text-xs font-black text-gray-900 dark:text-white truncate">{user?.name}</div>
-            <div className="text-[10px] text-gray-400 font-bold uppercase truncate">
-              {user ? t(`roles.${user.role}`) : ""}
-            </div>
+            <div className="text-[10px] text-gray-400 font-bold uppercase truncate">{user?.role}</div>
           </div>
         </div>
         <button
@@ -94,7 +91,7 @@ export default function AdminLayout() {
           className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          <span>{t("nav.logout")}</span>
+          <span>Logout</span>
         </button>
       </div>
     </div>
@@ -102,14 +99,14 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 flex text-gray-900 dark:text-gray-100">
-      <aside className="hidden lg:block w-64 shrink-0 border-l border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky top-0 h-screen">
+      <aside className="hidden lg:block w-64 shrink-0 border-r border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky top-0 h-screen">
         {sidebarContent}
       </aside>
 
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute right-0 top-0 h-full w-72 bg-white dark:bg-neutral-900 shadow-2xl">
+          <aside className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-neutral-900 shadow-2xl">
             {sidebarContent}
           </aside>
         </div>
@@ -117,14 +114,14 @@ export default function AdminLayout() {
 
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="sticky top-0 z-30 bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 px-4 sm:px-6 py-3 flex items-center justify-between">
-          <button className="lg:hidden p-2 -mr-2" onClick={() => setMobileOpen(true)}>
+          <button className="lg:hidden p-2 -ml-2" onClick={() => setMobileOpen(true)}>
             <Menu className="w-5 h-5" />
           </button>
           <div className="hidden lg:block" />
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg border border-gray-200 dark:border-neutral-700 hover:bg-slate-50 dark:hover:bg-neutral-800 transition-colors"
-            aria-label={t("layout.toggleDarkMode")}
+            aria-label="Toggle dark mode"
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>

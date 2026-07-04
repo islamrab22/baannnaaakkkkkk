@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { api } from "../api/client.ts";
 import { toast } from "sonner";
 
@@ -11,7 +10,6 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ value, onChange, folder }: ImageUploaderProps) {
-  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -23,9 +21,9 @@ export default function ImageUploader({ value, onChange, folder }: ImageUploader
       if (folder) form.append("folder", folder);
       const result = await api.upload<{ url: string }>("/api/admin/upload/image", form);
       onChange(result.url);
-      toast.success(t("imageUpload.success"));
+      toast.success("Image uploaded successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("imageUpload.failed"));
+      toast.error(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }
@@ -52,7 +50,7 @@ export default function ImageUploader({ value, onChange, folder }: ImageUploader
           className="w-full h-40 rounded-xl border-2 border-dashed border-gray-300 dark:border-neutral-700 flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-brand hover:text-brand transition-colors"
         >
           {uploading ? <Loader2 className="w-6 h-6 animate-spin" /> : <ImagePlus className="w-6 h-6" />}
-          <span className="text-xs font-bold">{uploading ? t("imageUpload.uploading") : t("imageUpload.clickToUpload")}</span>
+          <span className="text-xs font-bold">{uploading ? "Uploading..." : "Click to upload image"}</span>
         </button>
       )}
       <input

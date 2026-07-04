@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import DataTable, { type Column } from "../components/DataTable.tsx";
 import Pagination from "../components/Pagination.tsx";
 import Modal from "../components/Modal.tsx";
@@ -29,7 +28,6 @@ const EMPTY_FORM: CampaignForm = {
 };
 
 export default function CampaignsPage() {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const canWrite = user?.role === "ADMIN" || user?.role === "EDITOR";
   const canDelete = user?.role === "ADMIN";
@@ -61,15 +59,15 @@ export default function CampaignsPage() {
     try {
       if (editing) {
         await api.patch(`/api/admin/campaigns/${editing.id}`, form);
-        toast.success(t("campaigns.toasts.updated"));
+        toast.success("Campaign updated");
       } else {
         await api.post("/api/admin/campaigns", form);
-        toast.success(t("campaigns.toasts.created"));
+        toast.success("Campaign created");
       }
       setModalOpen(false);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("campaigns.toasts.saveFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to save campaign");
     } finally {
       setSaving(false);
     }
@@ -80,18 +78,18 @@ export default function CampaignsPage() {
     setDeleting(true);
     try {
       await api.delete(`/api/admin/campaigns/${deleteTarget.id}`);
-      toast.success(t("campaigns.toasts.deleted"));
+      toast.success("Campaign deleted");
       setDeleteTarget(null);
       list.refresh();
     } catch (err) {
-      toast.error(err instanceof ApiClientError ? err.message : t("campaigns.toasts.deleteFailed"));
+      toast.error(err instanceof ApiClientError ? err.message : "Failed to delete campaign");
     } finally {
       setDeleting(false);
     }
   };
 
   const columns: Column<Campaign>[] = [
-    { key: "titleEn", label: t("campaigns.table.campaign"), sortable: true, render: (c) => (
+    { key: "titleEn", label: "Campaign", sortable: true, render: (c) => (
       <div className="flex items-center gap-3">
         <img src={c.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
         <div>
@@ -100,12 +98,12 @@ export default function CampaignsPage() {
         </div>
       </div>
     ) },
-    { key: "segment", label: t("campaigns.table.segment"), render: (c) => <span className="font-bold">{t(`products.segments.${c.segment}`)}</span> },
-    { key: "status", label: t("campaigns.table.status"), sortable: true, render: (c) => <StatusBadge status={c.status} /> },
-    { key: "actions", label: t("common.actions"), render: (c) => (
+    { key: "segment", label: "Segment", render: (c) => <span className="font-bold">{c.segment}</span> },
+    { key: "status", label: "Status", sortable: true, render: (c) => <StatusBadge status={c.status} /> },
+    { key: "actions", label: "Actions", render: (c) => (
       <div className="flex items-center gap-2">
-        <button className={iconButtonClass} onClick={() => openEdit(c)} title={t("common.edit")}><Edit2 className="w-3.5 h-3.5" /></button>
-        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(c)} title={t("common.delete")}><Trash2 className="w-3.5 h-3.5" /></button>}
+        <button className={iconButtonClass} onClick={() => openEdit(c)} title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
+        {canDelete && <button className={iconButtonDangerClass} onClick={() => setDeleteTarget(c)} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
       </div>
     ) },
   ];
@@ -114,10 +112,10 @@ export default function CampaignsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white">{t("campaigns.title")}</h1>
-          <p className="text-xs text-gray-400 font-medium mt-1">{t("campaigns.subtitle")}</p>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white">Campaigns</h1>
+          <p className="text-xs text-gray-400 font-medium mt-1">Manage seasonal promotions shown on the homepage.</p>
         </div>
-        {canWrite && <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> {t("campaigns.newCampaign")}</button>}
+        {canWrite && <button onClick={openCreate} className={`${buttonPrimaryClass} flex items-center gap-1.5`}><Plus className="w-4 h-4" /> New Campaign</button>}
       </div>
 
       <DataTable
@@ -131,72 +129,72 @@ export default function CampaignsPage() {
         onSortChange={list.onSortChange}
         filters={
           <select value={segmentFilter} onChange={(e) => setSegmentFilter(e.target.value)} className={`${inputClass} !w-auto`}>
-            <option value="">{t("common.allSegments")}</option>
-            {SEGMENTS.map((s) => <option key={s} value={s}>{t(`products.segments.${s}`)}</option>)}
+            <option value="">All Segments</option>
+            {SEGMENTS.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         }
       />
       <Pagination page={list.page} totalPages={list.totalPages} total={list.total} pageSize={list.pageSize} onPageChange={list.setPage} />
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t("campaigns.editCampaign") : t("campaigns.createCampaign")} wide>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Campaign" : "Create Campaign"} wide>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className={labelClass}>{t("campaigns.bannerImage")}</label>
+            <label className={labelClass}>Banner Image</label>
             <ImageUploader value={form.image} onChange={(url) => setForm({ ...form, image: url })} folder="campaigns" />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.segment")}</label>
+            <label className={labelClass}>Segment</label>
             <select value={form.segment} onChange={(e) => setForm({ ...form, segment: e.target.value })} className={inputClass}>
-              {SEGMENTS.map((s) => <option key={s} value={s}>{t(`products.segments.${s}`)}</option>)}
+              {SEGMENTS.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.status")}</label>
+            <label className={labelClass}>Status</label>
             <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className={inputClass}>
-              {STATUSES.map((s) => <option key={s} value={s}>{t(`contentStatuses.${s}`)}</option>)}
+              {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.linkTarget")}</label>
-            <input required value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder={t("campaigns.linkTargetPlaceholder")} className={inputClass} />
+            <label className={labelClass}>Link Target Page</label>
+            <input required value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="cards / loans / accounts" className={inputClass} />
           </div>
           <div />
           <div>
-            <label className={labelClass}>{t("campaigns.badgeAr")}</label>
+            <label className={labelClass}>Badge (Arabic)</label>
             <input required dir="rtl" value={form.badgeAr} onChange={(e) => setForm({ ...form, badgeAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.badgeEn")}</label>
+            <label className={labelClass}>Badge (English)</label>
             <input required value={form.badgeEn} onChange={(e) => setForm({ ...form, badgeEn: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.titleAr")}</label>
+            <label className={labelClass}>Title (Arabic)</label>
             <input required dir="rtl" value={form.titleAr} onChange={(e) => setForm({ ...form, titleAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.titleEn")}</label>
+            <label className={labelClass}>Title (English)</label>
             <input required value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.descAr")}</label>
+            <label className={labelClass}>Description (Arabic)</label>
             <textarea required dir="rtl" rows={3} value={form.descAr} onChange={(e) => setForm({ ...form, descAr: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>{t("campaigns.descEn")}</label>
+            <label className={labelClass}>Description (English)</label>
             <textarea required rows={3} value={form.descEn} onChange={(e) => setForm({ ...form, descEn: e.target.value })} className={inputClass} />
           </div>
 
           <div className="md:col-span-2 flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>{t("common.cancel")}</button>
-            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? t("common.saving") : t("campaigns.saveCampaign")}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className={buttonSecondaryClass}>Cancel</button>
+            <button type="submit" disabled={saving} className={buttonPrimaryClass}>{saving ? "Saving..." : "Save Campaign"}</button>
           </div>
         </form>
       </Modal>
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title={t("campaigns.deleteTitle")}
-        message={t("campaigns.deleteMessage", { name: deleteTarget?.titleEn })}
+        title="Delete Campaign"
+        message={`Are you sure you want to delete "${deleteTarget?.titleEn}"?`}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         loading={deleting}

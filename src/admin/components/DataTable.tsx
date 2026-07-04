@@ -1,6 +1,5 @@
 import React from "react";
 import { ArrowUpDown, Search } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 export interface Column<T> {
   key: string;
@@ -35,20 +34,18 @@ export default function DataTable<T extends { id: string }>({
   onSortChange,
   toolbar,
   filters,
-  emptyLabel,
+  emptyLabel = "No records found.",
 }: DataTableProps<T>) {
-  const { t } = useTranslation();
-
   return (
     <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
       <div className="p-4 border-b border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={t("common.search")}
-            className="w-full bg-slate-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg pr-9 pl-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-brand text-right"
+            placeholder="Search..."
+            className="w-full bg-slate-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg pl-9 pr-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-brand"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -62,12 +59,12 @@ export default function DataTable<T extends { id: string }>({
           <thead className="bg-slate-50 dark:bg-neutral-800/60 text-gray-500 dark:text-gray-400 font-extrabold border-b border-gray-200 dark:border-neutral-800">
             <tr>
               {columns.map((col) => (
-                <th key={col.key} className={`p-3 text-right ${col.className ?? ""}`}>
+                <th key={col.key} className={`p-3 text-left ${col.className ?? ""}`}>
                   {col.sortable && onSortChange ? (
                     <button onClick={() => onSortChange(col.key)} className="flex items-center gap-1 hover:text-brand">
                       <span>{col.label}</span>
                       <ArrowUpDown className={`w-3 h-3 ${sortBy === col.key ? "text-brand" : ""}`} />
-                      {sortBy === col.key && <span className="text-[9px]">{sortOrder === "asc" ? t("common.sortAsc") : t("common.sortDesc")}</span>}
+                      {sortBy === col.key && <span className="text-[9px]">{sortOrder}</span>}
                     </button>
                   ) : (
                     col.label
@@ -80,13 +77,13 @@ export default function DataTable<T extends { id: string }>({
             {loading ? (
               <tr>
                 <td colSpan={columns.length} className="p-8 text-center text-gray-400 font-bold">
-                  {t("common.loading")}
+                  Loading...
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="p-8 text-center text-gray-400 font-bold">
-                  {emptyLabel ?? t("common.noRecords")}
+                  {emptyLabel}
                 </td>
               </tr>
             ) : (
