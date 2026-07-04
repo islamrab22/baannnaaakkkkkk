@@ -51,3 +51,24 @@ export function formatTelegramMessage(title: string, fields: Record<string, stri
 export function formatTelegramDate(date: Date): string {
   return `${date.toISOString().replace("T", " ").slice(0, 19)} UTC`;
 }
+
+export const MESSAGE_STATUS_LABELS_AR: Record<string, string> = {
+  NEW: "جديدة",
+  READ: "مقروءة",
+  ARCHIVED: "مؤرشفة",
+};
+
+export const REQUEST_STATUS_LABELS_AR: Record<string, string> = {
+  PENDING: "قيد الانتظار",
+  CONTACTED: "تم التواصل",
+  APPROVED: "موافق عليه",
+  REJECTED: "مرفوض",
+};
+
+export const MESSAGE_TYPE_TITLES_AR: Record<string, string> = {
+  CONTACT: "📩 رسالة تواصل جديدة",
+  NEWSLETTER: "📩 اشتراك جديد في النشرة الإخبارية",
+  CAREER: "📩 طلب توظيف جديد",
+  LOAN_INQUIRY: "🏦 طلب قرض جديد",
+  CARD_INQUIRY: "💳 طلب بطاقة جديد",
+};

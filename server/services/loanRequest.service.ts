@@ -2,7 +2,7 @@ import { loanRequestRepository } from "../repositories/loanRequest.repository.ts
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
-import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate, REQUEST_STATUS_LABELS_AR } from "../config/telegram.ts";
 import type { Prisma, RequestStatus } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "status", "loanType", "amount"];
@@ -23,15 +23,15 @@ export const loanRequestService = {
     const request = await loanRequestRepository.create(clean as unknown as Prisma.LoanRequestCreateInput);
 
     void sendTelegramNotification(
-      formatTelegramMessage("🏦 New loan request", {
-        Name: request.name,
-        Phone: request.phone,
-        Email: request.email,
-        "Request type": request.loanType,
-        Amount: request.amount,
-        Branch: request.preferredBranch,
-        Status: request.status,
-        "Submitted at": formatTelegramDate(request.createdAt),
+      formatTelegramMessage("🏦 طلب قرض جديد", {
+        "الاسم": request.name,
+        "الهاتف": request.phone,
+        "البريد الإلكتروني": request.email,
+        "نوع الطلب": request.loanType,
+        "المبلغ": request.amount,
+        "الفرع": request.preferredBranch,
+        "الحالة": REQUEST_STATUS_LABELS_AR[request.status] ?? request.status,
+        "تاريخ الإرسال": formatTelegramDate(request.createdAt),
       })
     );
 
