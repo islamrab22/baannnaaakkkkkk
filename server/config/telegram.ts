@@ -47,3 +47,7 @@ export function formatTelegramMessage(title: string, fields: Record<string, stri
   }
   return lines.join("\n");
 }
+
+export function formatTelegramDate(date: Date): string {
+  return `${date.toISOString().replace("T", " ").slice(0, 19)} UTC`;
+}

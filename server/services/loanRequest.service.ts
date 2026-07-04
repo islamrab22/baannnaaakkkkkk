@@ -2,7 +2,7 @@ import { loanRequestRepository } from "../repositories/loanRequest.repository.ts
 import { ApiError } from "../utils/ApiError.ts";
 import { sanitizeObjectStrings } from "../utils/sanitize.ts";
 import { normalizePagination, buildPaginatedResult, type PaginationQuery } from "../utils/pagination.ts";
-import { sendTelegramNotification, formatTelegramMessage } from "../config/telegram.ts";
+import { sendTelegramNotification, formatTelegramMessage, formatTelegramDate } from "../config/telegram.ts";
 import type { Prisma, RequestStatus } from "@prisma/client";
 
 const ALLOWED_SORT_FIELDS = ["createdAt", "status", "loanType", "amount"];
@@ -27,9 +27,11 @@ export const loanRequestService = {
         Name: request.name,
         Phone: request.phone,
         Email: request.email,
-        "Loan type": request.loanType,
+        "Request type": request.loanType,
         Amount: request.amount,
-        "Preferred branch": request.preferredBranch,
+        Branch: request.preferredBranch,
+        Status: request.status,
+        "Submitted at": formatTelegramDate(request.createdAt),
       })
     );
 
