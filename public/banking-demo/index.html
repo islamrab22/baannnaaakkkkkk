@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>بنكي الرقمي | نسخة تجريبية</title>
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="vendor/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="demo-banner">نسخة تجريبية - لا تدخل بيانات حقيقية</div>
+
+    <div class="phone-frame">
+      <div class="phone-screen" id="app-root">
+
+        <!-- ===================== HOME / LANDING ===================== -->
+        <section class="screen active" id="screen-home" data-screen="home">
+          <div class="topbar">
+            <span class="lang-badge">Ar</span>
+            <span class="brand-title">مرحباً!</span>
+          </div>
+
+          <h1 class="page-title">مرحباً بك في تطبيق البنك الرقمي</h1>
+
+          <div class="d-grid gap-3 mt-4">
+            <button type="button" class="btn btn-brand" data-goto="nid">
+              الدخول بالرقم الوطني
+            </button>
+            <button type="button" class="btn btn-brand-outline" data-goto="register-card">
+              التسجيل برقم البطاقة
+            </button>
+            <button type="button" class="btn btn-brand-outline" data-goto="register-account">
+              التسجيل بمعلومات الحساب
+            </button>
+          </div>
+
+          <a href="#" class="terms-link">الشروط والأحكام</a>
+
+          <div class="info-cards">
+            <div class="info-card">
+              <i class="bi bi-geo-alt"></i>
+              <span>مواقع</span>
+            </div>
+            <div class="info-card">
+              <i class="bi bi-question-circle"></i>
+              <span>عن البنك</span>
+            </div>
+            <div class="info-card">
+              <i class="bi bi-telephone"></i>
+              <span>اتصل بنا</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== FLOW 1 - SCREEN 1: NATIONAL ID ===================== -->
+        <section class="screen" id="screen-nid" data-screen="nid">
+          <div class="topbar">
+            <button type="button" class="btn-back" data-goto="home"><i class="bi bi-arrow-right"></i></button>
+            <span class="brand-title">مرحباً!</span>
+          </div>
+
+          <h1 class="page-title">مرحباً بك في تطبيق البنك</h1>
+
+          <form id="form-nid" novalidate>
+            <div class="field-group">
+              <label for="nid-input">رقم الحساب أو رقم الهوية</label>
+              <input
+                type="text"
+                class="field-input"
+                id="nid-input"
+                placeholder="أدخل رقم الحساب أو رقم الهوية"
+                autocomplete="off"
+              />
+              <div class="field-error" id="nid-error"></div>
+            </div>
+
+            <button type="submit" class="btn btn-brand w-100 mt-4">التالي</button>
+          </form>
+
+          <a href="#" class="terms-link">الشروط والأحكام</a>
+        </section>
+
+        <!-- ===================== FLOW 1 - SCREEN 2: LOGIN ===================== -->
+        <section class="screen" id="screen-login" data-screen="login">
+          <div class="topbar">
+            <button type="button" class="btn-back" data-goto="nid"><i class="bi bi-arrow-right"></i></button>
+            <span class="brand-title">تسجيل الدخول</span>
+          </div>
+
+          <form id="form-login" novalidate>
+            <div class="field-group">
+              <label for="login-username">اسم المستخدم</label>
+              <input
+                type="text"
+                class="field-input"
+                id="login-username"
+                placeholder="أدخل اسم المستخدم"
+                autocomplete="off"
+              />
+              <div class="field-error" id="login-username-error"></div>
+            </div>
+            <a href="#" class="hint-link">هل نسيت اسم المستخدم؟</a>
+
+            <div class="field-group mt-3">
+              <label for="login-password">كلمة المرور</label>
+              <input
+                type="password"
+                class="field-input"
+                id="login-password"
+                placeholder="أدخل كلمة المرور"
+                autocomplete="off"
+              />
+              <div class="field-error" id="login-password-error"></div>
+            </div>
+            <a href="#" class="hint-link">هل نسيت كلمة المرور؟</a>
+
+            <button type="submit" class="btn btn-brand w-100 mt-4">تسجيل الدخول</button>
+          </form>
+
+          <a href="#" class="terms-link">الشروط والأحكام</a>
+        </section>
+
+        <!-- ===================== FLOW 2: REGISTER WITH DEBIT CARD ===================== -->
+        <section class="screen" id="screen-register-card" data-screen="register-card">
+          <div class="topbar">
+            <button type="button" class="btn-back" data-goto="home"><i class="bi bi-arrow-right"></i></button>
+          </div>
+
+          <h1 class="page-title">التسجيل باستخدام بطاقة الخصم</h1>
+
+          <form id="form-register-card" novalidate>
+            <div class="field-group">
+              <label for="rc-username">اسم المستخدم (5-20 حرف)</label>
+              <input type="text" class="field-input" id="rc-username" placeholder="اسم المستخدم ( 5-20 حرف )" autocomplete="off" />
+              <div class="field-error" id="rc-username-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="rc-card-number">رقم البطاقة</label>
+              <input type="text" class="field-input" id="rc-card-number" placeholder="رقم البطاقة" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="rc-card-number-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="rc-card-code">رمز البطاقة</label>
+              <input type="password" class="field-input" id="rc-card-code" placeholder="رمز البطاقة" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="rc-card-code-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="rc-card-expiry">تاريخ انتهاء البطاقة</label>
+              <input type="text" class="field-input" id="rc-card-expiry" placeholder="MM/YY" autocomplete="off" />
+              <div class="field-error" id="rc-card-expiry-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="rc-mobile">رقم الموبايل</label>
+              <input type="text" class="field-input" id="rc-mobile" placeholder="رقم الموبايل" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="rc-mobile-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="rc-email">البريد الإلكتروني</label>
+              <input type="text" class="field-input" id="rc-email" placeholder="البريد الإلكتروني" autocomplete="off" />
+              <div class="field-error" id="rc-email-error"></div>
+            </div>
+
+            <div class="form-check terms-check mt-3">
+              <input class="form-check-input" type="checkbox" id="rc-terms" />
+              <label class="form-check-label" for="rc-terms">أوافق على الشروط والأحكام</label>
+              <div class="field-error" id="rc-terms-error"></div>
+            </div>
+
+            <button type="submit" class="btn btn-brand w-100 mt-4">تسجيل</button>
+          </form>
+        </section>
+
+        <!-- ===================== FLOW 3: REGISTER WITH ACCOUNT INFO ===================== -->
+        <section class="screen" id="screen-register-account" data-screen="register-account">
+          <div class="topbar">
+            <button type="button" class="btn-back" data-goto="home"><i class="bi bi-arrow-right"></i></button>
+          </div>
+
+          <h1 class="page-title">التسجيل باستخدام معلومات الحساب</h1>
+
+          <form id="form-register-account" novalidate>
+            <div class="field-group">
+              <label for="ra-username">اسم المستخدم (5-20 حرف)</label>
+              <input type="text" class="field-input" id="ra-username" placeholder="اسم المستخدم ( 5-20 حرف )" autocomplete="off" />
+              <div class="field-error" id="ra-username-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-branch">اختر فرع</label>
+              <select class="field-input" id="ra-branch">
+                <option value="" selected>اختر فرع</option>
+                <option value="ramallah">فرع رام الله</option>
+                <option value="nablus">فرع نابلس</option>
+                <option value="hebron">فرع الخليل</option>
+                <option value="gaza">فرع غزة</option>
+              </select>
+              <div class="field-error" id="ra-branch-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-account">رقم الحساب (5-7 أرقام)</label>
+              <input type="text" class="field-input" id="ra-account" placeholder="رقم الحساب (5-7 أرقام)" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="ra-account-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-nid">رقم الهوية</label>
+              <input type="text" class="field-input" id="ra-nid" placeholder="رقم الهوية" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="ra-nid-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-birthdate">تاريخ الميلاد</label>
+              <input type="date" class="field-input" id="ra-birthdate" autocomplete="off" />
+              <div class="field-error" id="ra-birthdate-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-mobile">رقم الموبايل</label>
+              <input type="text" class="field-input" id="ra-mobile" placeholder="رقم الموبايل" inputmode="numeric" autocomplete="off" />
+              <div class="field-error" id="ra-mobile-error"></div>
+            </div>
+
+            <div class="field-group mt-3">
+              <label for="ra-email">البريد الإلكتروني</label>
+              <input type="text" class="field-input" id="ra-email" placeholder="البريد الإلكتروني" autocomplete="off" />
+              <div class="field-error" id="ra-email-error"></div>
+            </div>
+
+            <div class="form-check terms-check mt-3">
+              <input class="form-check-input" type="checkbox" id="ra-terms" />
+              <label class="form-check-label" for="ra-terms">أوافق على الشروط والأحكام</label>
+              <div class="field-error" id="ra-terms-error"></div>
+            </div>
+
+            <button type="submit" class="btn btn-brand w-100 mt-4">تسجيل</button>
+          </form>
+        </section>
+
+        <!-- ===================== OTP VERIFICATION (SHARED) ===================== -->
+        <section class="screen" id="screen-otp" data-screen="otp">
+          <div class="topbar">
+            <button type="button" class="btn-back" id="otp-back"><i class="bi bi-arrow-right"></i></button>
+          </div>
+
+          <div class="otp-icon"><i class="bi bi-shield-lock"></i></div>
+
+          <h1 class="page-title">التحقق من الرمز</h1>
+          <p class="page-subtitle">تم إرسال رمز تحقق تجريبي إلى رقم الموبايل</p>
+
+          <form id="form-otp" novalidate>
+            <div class="field-group">
+              <label for="otp-input">أدخل رمز التحقق</label>
+              <input
+                type="text"
+                class="field-input otp-input"
+                id="otp-input"
+                placeholder="أدخل رمز التحقق"
+                inputmode="numeric"
+                maxlength="6"
+                autocomplete="off"
+              />
+              <div class="field-error" id="otp-error"></div>
+            </div>
+
+            <button type="submit" class="btn btn-brand w-100 mt-4">تأكيد</button>
+          </form>
+
+          <a href="#" class="terms-link" id="otp-resend">إعادة إرسال الرمز</a>
+        </section>
+
+        <!-- ===================== SUCCESS ===================== -->
+        <section class="screen" id="screen-success" data-screen="success">
+          <div class="success-wrap">
+            <div class="success-icon"><i class="bi bi-check-circle"></i></div>
+            <p class="success-text">تمت العملية بنجاح - ديمو</p>
+            <button type="button" class="btn btn-brand w-100 mt-4" data-goto="home">
+              العودة إلى الصفحة الرئيسية
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
