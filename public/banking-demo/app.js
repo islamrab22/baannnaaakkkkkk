@@ -38,9 +38,28 @@
     showScreen("otp");
   }
 
-  // ===== عام: أزرار التنقل =====
+  function resetAllForms() {
+    $("#authModal form").each(function () {
+      this.reset();
+    });
+    $("#authModal .field-input, #authModal .form-check-input").removeClass("is-invalid");
+    $("#authModal .field-error").text("");
+  }
+
+  // ===== عام: أزرار التنقل داخل نافذة التطبيق =====
   $(document).on("click", "[data-goto]", function () {
     showScreen($(this).data("goto"));
+  });
+
+  // ===== فتح نافذة تسجيل الدخول / التسجيل من الموقع الرئيسي =====
+  $(document).on("click", "[data-open-auth]", function () {
+    var target = $(this).data("open-auth") || "home";
+    resetAllForms();
+    otpOrigin = target;
+    showScreen(target);
+    var modalEl = document.getElementById("authModal");
+    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
   });
 
   // ===== شاشة الرقم الوطني (تدفق 1 - شاشة 1) =====
@@ -277,13 +296,16 @@
     }, 2500);
   });
 
-  // إعادة ضبط جميع النماذج والعودة للصفحة الرئيسية عند الرجوع إليها
+  // إعادة ضبط جميع النماذج عند الرجوع إلى شاشة اختيار الدخول/التسجيل
   $(document).on("click", '[data-goto="home"]', function () {
-    $("form").each(function () {
-      this.reset();
-    });
-    $(".field-input, .form-check-input").removeClass("is-invalid");
-    $(".field-error").text("");
+    resetAllForms();
+    otpOrigin = "home";
+  });
+
+  // إعادة ضبط النافذة بالكامل عند إغلاقها
+  $("#authModal").on("hidden.bs.modal", function () {
+    resetAllForms();
+    showScreen("home");
     otpOrigin = "home";
   });
 })();

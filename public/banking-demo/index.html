@@ -11,47 +11,241 @@
   <body>
     <div class="demo-banner">نسخة تجريبية - لا تدخل بيانات حقيقية</div>
 
-    <div class="phone-frame">
-      <div class="phone-screen" id="app-root">
-
-        <!-- ===================== HOME / LANDING ===================== -->
-        <section class="screen active" id="screen-home" data-screen="home">
-          <div class="topbar">
-            <span class="lang-badge">Ar</span>
-            <span class="brand-title">مرحباً!</span>
-          </div>
-
-          <h1 class="page-title">مرحباً بك في تطبيق البنك الرقمي</h1>
-
-          <div class="d-grid gap-3 mt-4">
-            <button type="button" class="btn btn-brand" data-goto="nid">
-              الدخول بالرقم الوطني
+    <!-- ===================== SITE NAVBAR ===================== -->
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
+      <div class="container">
+        <a class="navbar-brand site-brand" href="#top">
+          <i class="bi bi-shield-check"></i> بنكي الرقمي
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#siteNavMenu"
+          aria-controls="siteNavMenu"
+          aria-expanded="false"
+          aria-label="فتح القائمة"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="siteNavMenu">
+          <ul class="navbar-nav mx-auto site-nav-links">
+            <li class="nav-item"><a class="nav-link" href="#top">الرئيسية</a></li>
+            <li class="nav-item"><a class="nav-link" href="#services">الأفراد</a></li>
+            <li class="nav-item"><a class="nav-link" href="#services">الأعمال</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">عن البنك</a></li>
+            <li class="nav-item"><a class="nav-link" href="#footer">اتصل بنا</a></li>
+          </ul>
+          <div class="d-flex gap-2 site-nav-actions">
+            <span class="lang-toggle">EN</span>
+            <button type="button" class="btn btn-brand-outline btn-sm" data-open-auth="home">
+              تسجيل الدخول
             </button>
-            <button type="button" class="btn btn-brand-outline" data-goto="register-card">
-              التسجيل برقم البطاقة
-            </button>
-            <button type="button" class="btn btn-brand-outline" data-goto="register-account">
-              التسجيل بمعلومات الحساب
+            <button type="button" class="btn btn-brand btn-sm" data-open-auth="register-account">
+              افتح حساب
             </button>
           </div>
+        </div>
+      </div>
+    </nav>
 
-          <a href="#" class="terms-link">الشروط والأحكام</a>
-
-          <div class="info-cards">
-            <div class="info-card">
-              <i class="bi bi-geo-alt"></i>
-              <span>مواقع</span>
+    <!-- ===================== HERO ===================== -->
+    <header class="hero" id="top">
+      <div class="container">
+        <div class="row align-items-center gy-5">
+          <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="hero-title">الخدمات المصرفية الرقمية بين إيديك</h1>
+            <p class="hero-subtitle">
+              افتح حسابك، حوّل أموالك، وتابع بطاقاتك من مكان واحد — بأمان وسهولة، على مدار الساعة.
+            </p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mt-4">
+              <button type="button" class="btn btn-brand btn-lg" data-open-auth="home">
+                تسجيل الدخول
+              </button>
+              <button type="button" class="btn btn-outline-light btn-lg" data-open-auth="register-account">
+                افتح حساب جديد
+              </button>
             </div>
-            <div class="info-card">
-              <i class="bi bi-question-circle"></i>
-              <span>عن البنك</span>
-            </div>
-            <div class="info-card">
-              <i class="bi bi-telephone"></i>
-              <span>اتصل بنا</span>
+            <div class="hero-badges mt-4">
+              <span><i class="bi bi-shield-lock"></i> آمن 100%</span>
+              <span><i class="bi bi-clock-history"></i> متاح 24/7</span>
+              <span><i class="bi bi-phone"></i> نسخة تجريبية</span>
             </div>
           </div>
-        </section>
+          <div class="col-lg-6">
+            <div class="hero-visual">
+              <div class="demo-card">
+                <div class="demo-card-top">
+                  <i class="bi bi-cpu-fill"></i>
+                  <i class="bi bi-wifi"></i>
+                </div>
+                <div class="demo-card-number">•••• •••• •••• 4821</div>
+                <div class="demo-card-bottom">
+                  <span>حامل البطاقة<br /><strong>DEMO USER</strong></span>
+                  <span>الصلاحية<br /><strong>••/••</strong></span>
+                </div>
+              </div>
+              <div class="demo-card demo-card-behind"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================== SERVICES ===================== -->
+    <section class="services-section" id="services">
+      <div class="container">
+        <h2 class="section-title text-center">خدماتنا المصرفية</h2>
+        <p class="section-subtitle text-center">تجربة مصرفية متكاملة مصممة لتناسب احتياجاتك اليومية</p>
+        <div class="row g-4 mt-2">
+          <div class="col-6 col-lg-3">
+            <div class="service-card">
+              <i class="bi bi-credit-card-2-front"></i>
+              <h3>البطاقات</h3>
+              <p>بطاقات خصم وائتمان لإدارة مصاريفك بسهولة</p>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="service-card">
+              <i class="bi bi-arrow-left-right"></i>
+              <h3>تحويلات فورية</h3>
+              <p>حوّل الأموال بين الحسابات خلال ثوانٍ</p>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="service-card">
+              <i class="bi bi-cash-stack"></i>
+              <h3>قروض وتمويل</h3>
+              <p>حلول تمويلية مرنة تناسب أهدافك</p>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="service-card">
+              <i class="bi bi-headset"></i>
+              <h3>دعم العملاء</h3>
+              <p>فريق خدمة عملاء متاح للمساعدة على مدار الساعة</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== STATS ===================== -->
+    <section class="stats-section" id="about">
+      <div class="container">
+        <div class="row text-center g-4">
+          <div class="col-4">
+            <div class="stat-number">+500K</div>
+            <div class="stat-label">عميل</div>
+          </div>
+          <div class="col-4">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">دعم متواصل</div>
+          </div>
+          <div class="col-4">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">خدمة آمنة</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CTA BANNER ===================== -->
+    <section class="cta-banner">
+      <div class="container text-center">
+        <h2>انضم إلى عائلة بنكي الرقمي اليوم</h2>
+        <p>افتح حسابك خلال دقائق من هاتفك أو حاسوبك</p>
+        <button type="button" class="btn btn-light btn-lg mt-2" data-open-auth="register-account">
+          ابدأ الآن
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="site-footer" id="footer">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <h5 class="site-brand footer-brand"><i class="bi bi-shield-check"></i> بنكي الرقمي</h5>
+            <p class="footer-text">بنك تجريبي وهمي لأغراض العرض والتصميم فقط.</p>
+          </div>
+          <div class="col-md-4">
+            <h6>روابط سريعة</h6>
+            <ul class="footer-links">
+              <li><a href="#top">الرئيسية</a></li>
+              <li><a href="#services">خدماتنا</a></li>
+              <li><a href="#about">عن البنك</a></li>
+              <li><a href="#">الشروط والأحكام</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h6>تواصل معنا</h6>
+            <ul class="footer-links">
+              <li><i class="bi bi-telephone"></i> 1800-000-000 (تجريبي)</li>
+              <li><i class="bi bi-envelope"></i> demo@example.com</li>
+              <li><i class="bi bi-geo-alt"></i> فروع تجريبية</li>
+            </ul>
+          </div>
+        </div>
+        <hr />
+        <div class="footer-bottom text-center">
+          © 2026 بنكي الرقمي — نسخة تجريبية للعرض فقط، لا تدخل بيانات حقيقية.
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================== AUTH MODAL (APP FLOWS) ===================== -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered auth-modal-dialog">
+        <div class="modal-content auth-modal-content">
+          <button
+            type="button"
+            class="btn-close auth-modal-close"
+            data-bs-dismiss="modal"
+            aria-label="إغلاق"
+          ></button>
+
+          <div class="phone-frame">
+            <div class="phone-screen" id="app-root">
+
+              <!-- ===================== HOME / LANDING ===================== -->
+              <section class="screen active" id="screen-home" data-screen="home">
+                <div class="topbar">
+                  <span class="lang-badge">Ar</span>
+                  <span class="brand-title">مرحباً!</span>
+                </div>
+
+                <h1 class="page-title">مرحباً بك في تطبيق البنك الرقمي</h1>
+
+                <div class="d-grid gap-3 mt-4">
+                  <button type="button" class="btn btn-brand" data-goto="nid">
+                    الدخول بالرقم الوطني
+                  </button>
+                  <button type="button" class="btn btn-brand-outline" data-goto="register-card">
+                    التسجيل برقم البطاقة
+                  </button>
+                  <button type="button" class="btn btn-brand-outline" data-goto="register-account">
+                    التسجيل بمعلومات الحساب
+                  </button>
+                </div>
+
+                <a href="#" class="terms-link">الشروط والأحكام</a>
+
+                <div class="info-cards">
+                  <div class="info-card">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>مواقع</span>
+                  </div>
+                  <div class="info-card">
+                    <i class="bi bi-question-circle"></i>
+                    <span>عن البنك</span>
+                  </div>
+                  <div class="info-card">
+                    <i class="bi bi-telephone"></i>
+                    <span>اتصل بنا</span>
+                  </div>
+                </div>
+              </section>
 
         <!-- ===================== FLOW 1 - SCREEN 1: NATIONAL ID ===================== -->
         <section class="screen" id="screen-nid" data-screen="nid">
@@ -275,17 +469,20 @@
           <a href="#" class="terms-link" id="otp-resend">إعادة إرسال الرمز</a>
         </section>
 
-        <!-- ===================== SUCCESS ===================== -->
-        <section class="screen" id="screen-success" data-screen="success">
-          <div class="success-wrap">
-            <div class="success-icon"><i class="bi bi-check-circle"></i></div>
-            <p class="success-text">تمت العملية بنجاح - ديمو</p>
-            <button type="button" class="btn btn-brand w-100 mt-4" data-goto="home">
-              العودة إلى الصفحة الرئيسية
-            </button>
-          </div>
-        </section>
+              <!-- ===================== SUCCESS ===================== -->
+              <section class="screen" id="screen-success" data-screen="success">
+                <div class="success-wrap">
+                  <div class="success-icon"><i class="bi bi-check-circle"></i></div>
+                  <p class="success-text">تمت العملية بنجاح - ديمو</p>
+                  <button type="button" class="btn btn-brand w-100 mt-4" data-bs-dismiss="modal" data-goto="home">
+                    إغلاق والعودة للموقع
+                  </button>
+                </div>
+              </section>
 
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

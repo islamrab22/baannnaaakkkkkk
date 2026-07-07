@@ -33,6 +33,291 @@ body {
   padding: 6px 10px;
 }
 
+/* =========================================================
+   SITE HOMEPAGE (navbar, hero, services, footer)
+   ========================================================= */
+
+.site-navbar {
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 12px 0;
+  z-index: 60;
+}
+
+.site-brand {
+  color: var(--brand);
+  font-weight: 800;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-nav-links .nav-link {
+  color: var(--text-dark);
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.site-nav-links .nav-link:hover {
+  color: var(--brand);
+}
+
+.site-nav-actions {
+  align-items: center;
+}
+
+.lang-toggle {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  align-self: center;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+  color: #fff;
+  padding: 70px 0;
+}
+
+.hero-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  max-width: 520px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+@media (min-width: 992px) {
+  .hero-badges {
+    justify-content: flex-start;
+  }
+}
+
+.hero-badges span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.hero-visual {
+  position: relative;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.demo-card {
+  background: linear-gradient(145deg, #2b2b2b, #4a4a4a);
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 2;
+}
+
+.demo-card-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  color: var(--brand-light);
+  margin-bottom: 36px;
+}
+
+.demo-card-number {
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+  margin-bottom: 22px;
+}
+
+.demo-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.demo-card-behind {
+  position: absolute;
+  inset: 14px -14px auto 14px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  z-index: 1;
+}
+
+.services-section {
+  padding: 70px 0;
+  background: #fff;
+}
+
+.section-title {
+  font-weight: 800;
+  color: var(--text-dark);
+  font-size: 1.7rem;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+}
+
+.service-card {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 14px;
+  padding: 28px 16px;
+  text-align: center;
+  height: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+}
+
+.service-card i {
+  font-size: 2.2rem;
+  color: var(--brand);
+  margin-bottom: 14px;
+}
+
+.service-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.service-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.stats-section {
+  background: var(--brand-bg-soft);
+  padding: 50px 0;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.cta-banner {
+  background: var(--brand);
+  color: #fff;
+  padding: 60px 0;
+}
+
+.cta-banner h2 {
+  font-weight: 800;
+  font-size: 1.6rem;
+}
+
+.site-footer {
+  background: #241323;
+  color: #d8c9d4;
+  padding: 50px 0 20px;
+}
+
+.footer-brand {
+  color: #fff;
+}
+
+.footer-text {
+  color: #b9a6b4;
+  font-size: 0.9rem;
+}
+
+.site-footer h6 {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+  color: #cbb9c6;
+}
+
+.footer-links a {
+  color: #cbb9c6;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.site-footer hr {
+  border-color: rgba(255, 255, 255, 0.12);
+  margin: 30px 0 16px;
+}
+
+.footer-bottom {
+  color: #a993a4;
+  font-size: 0.82rem;
+}
+
+/* =========================================================
+   AUTH MODAL (wraps the mobile app-style flows)
+   ========================================================= */
+
+.auth-modal-dialog {
+  max-width: 460px;
+}
+
+.auth-modal-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: -6px;
+  left: 6px;
+  z-index: 10;
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 8px;
+  opacity: 1;
+}
+
+/* =========================================================
+   MOBILE APP FLOWS (inside the modal)
+   ========================================================= */
+
 .phone-frame {
   max-width: 430px;
   margin: 24px auto 40px;
